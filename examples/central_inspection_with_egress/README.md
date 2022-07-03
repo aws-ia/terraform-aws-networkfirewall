@@ -3,7 +3,7 @@
 
 This example shows the creation of a centralized Inspection VPC in a Hub and Spoke architecture with AWS Transit Gateway, with the idea of managing the traffic inspection at scale (East/West and North/South). The Inspection VPC is created with AWS Transit Gateway ENIs, firewall endpoints, and NAT gateways (allowing a centralized egress point). The image below shows an example of the architecture, routing configuration, and traffic flow.
 
-![Central Inspection VPC with Egress traffic - Architecture diagram](../../images/centralized\\_vpc\\_with\\_egress.png)
+![Central Inspection VPC with Egress traffic - Architecture diagram](../../images/centralized\_vpc\_with\_egress.png)
 
 ## Requirements
 
