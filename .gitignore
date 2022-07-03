@@ -40,3 +40,8 @@ terraform.rc
 
 go.mod
 go.sum
+
+
+# TFLINT
+
+.tflint.hcl
