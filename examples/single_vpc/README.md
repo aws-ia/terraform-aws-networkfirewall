@@ -3,7 +3,7 @@
 
 This example builds AWS Network Firewall in a single VPC to inspect any ingress/egress traffic - distributed inspection model. The firewall endpoints are placed in subnets between the Internet gateway (IGW) and the public subnets (where you can place the Elastic Load Balancers and NAT gateways). The image below shows an example of the architecture, routing configuration, and traffic flow.
 
-![Single VPC - Architecture diagram](../images/single\\_vpc.png)
+![Single VPC - Architecture diagram](../../images/single\_vpc.png)
 
 ## Requirements
 
