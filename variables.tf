@@ -60,18 +60,18 @@ EOF
 variable "routing_configuration" {
   type        = any
   description = <<-EOF
-  Configuration of the routing desired in the VPC. Depending the type of VPC, the information to provide is different. The type of VPCs supported are: `single_vpc`, `single_vpc_routing_enhacement`, `centralized_inspection_without_egress`, and `centralized_inspection_with_egress`. **Only one key (option) can be defined**
+  Configuration of the routing desired in the VPC. Depending the type of VPC, the information to provide is different. The type of VPCs supported are: `single_vpc`, `intra_vpc_inspection`, `centralized_inspection_without_egress`, and `centralized_inspection_with_egress`. **Only one key (option) can be defined**
   More information about the differences between each of the VPC types can be checked in the README. Example definition of each type (supposing us-east-1 as AWS Region): 
   ```
   routing_configuration = { 
     single_vpc = { 
       igw_route_table = rtb-ID
-      route_tables = { 
+      protected_subnet_route_tables = { 
         us-east-1a = rtb-IDa
         us-east-1b = rtb-IDb
         us-east-1c = rtb-IDc
       }
-      cidr_blocks = {
+      protected_subnet_cidr_blocks = {
         us-east-1a = "10.0.0.0/24"
         us-east-1b = "10.0.1.0/24"
         us-east-1c = "10.0.2.0/24"
@@ -80,29 +80,32 @@ variable "routing_configuration" {
   }
 
   routing_configuration = { 
-    single_vpc_routing_enhacement = { 
-      workload_to_db = { 
-        route_tables = { 
-          us-east-1a = rtb-IDa
-          us-east-1b = rtb-IDb
-          us-east-1c = rtb-IDc
-        }
-        cidr_blocks = {
-          us-east-1a = "10.0.0.0/24"
-          us-east-1b = "10.0.1.0/24"
-          us-east-1c = "10.0.2.0/24"
-        }
-      }
-      db_to_workload = {
-        route_tables = { 
-          us-east-1a = rtb-IDaa
-          us-east-1b = rtb-IDbb
-          us-east-1c = rtb-IDcc
-        }
-        cidr_blocks = {
-          us-east-1a = "10.0.3.0/24"
-          us-east-1b = "10.0.4.0/24"
-          us-east-1c = "10.0.5.0/24"
+    intra_vpc_inspection = {
+      number_routes = 2
+      routes = {
+        { 
+          source_subnet_route_tables = { 
+            us-east-1a = rtb-IDa
+            us-east-1b = rtb-IDb
+            us-east-1c = rtb-IDc
+          }
+          destination_subnet_cidr_blocks = {
+            us-east-1a = "10.0.0.0/24"
+            us-east-1b = "10.0.1.0/24"
+            us-east-1c = "10.0.2.0/24"
+          }
+        },
+        {
+          source_subnet_route_tables = { 
+            us-east-1a = rtb-IDaa
+            us-east-1b = rtb-IDbb
+            us-east-1c = rtb-IDcc
+          }
+          destination_subnet_cidr_blocks = {
+            us-east-1a = "10.0.3.0/24"
+            us-east-1b = "10.0.4.0/24"
+            us-east-1c = "10.0.5.0/24"
+          }
         }
       }
     }
@@ -110,7 +113,7 @@ variable "routing_configuration" {
 
   routing_configuration = {
     centralized_inspection_without_egress = { 
-      tgw_route_tables = { 
+      tgw_subnet_route_tables = { 
         us-east-1a = rtb-IDa
         us-east-1b = rtb-IDb
         us-east-1c = rtb-IDc
@@ -138,10 +141,10 @@ EOF
 
   # Valid keys in var.routing_configuration
   validation {
-    error_message = "Valid keys in var.routing_configuration: \"single_vpc\", \"vpc_routing_enhacement\", \"centralized_inspection_without_egress\", \"centralized_inspection_with_egress\"."
+    error_message = "Valid keys in var.routing_configuration: \"single_vpc\", \"single_vpc_intra_subnet\", \"centralized_inspection_without_egress\", \"centralized_inspection_with_egress\"."
     condition = length(setsubtract(keys(try(var.routing_configuration, {})), [
       "single_vpc",
-      "single_vpc_routing_enhacement",
+      "intra_vpc_inspection",
       "centralized_inspection_without_egress",
       "centralized_inspection_with_egress"
     ])) == 0
@@ -153,32 +156,41 @@ EOF
     condition     = (length(keys(try(var.routing_configuration, {})))) == 1
   }
 
-  # Valid keys in VPC Ingress/Egress Routing Inspection
+  # Valid keys in Single VPC (Ingress/Egress Routing Inspection)
   validation {
-    error_message = "When configuring the inspecton routing in a single VPC, the valid key values are: \"igw_route_table\", \"route_tables\", \"cidr_blocks\"."
+    error_message = "When configuring the inspecton routing in a single VPC, the valid key values are: \"igw_route_table\", \"protected_subnet_route_tables\", \"protected_subnet_cidr_blocks\"."
     condition = length(setsubtract(keys(try(var.routing_configuration.single_vpc, {})), [
       "igw_route_table",
-      "route_tables",
-      "cidr_blocks"
+      "protected_subnet_route_tables",
+      "protected_subnet_cidr_blocks"
     ])) == 0
   }
 
-  # Valid keys in VPC Routing Enhacement Inspection
+ # Valid keys in Intra-VPC Inspection
   validation {
-    error_message = "When configuring the inspection with routing enhacement in a single VPC, the valid key values are: \"route_tables\", \"cidr_blocks\"."
+    error_message = "When configuring the intra-VPC inspecton routing, the valid key values are: \"number_routes\", \"routes\"."
+    condition = length(setsubtract(keys(try(var.routing_configuration.intra_vpc_inspection, {})), [
+      "number_routes",
+      "routes"
+    ])) == 0
+  }
+
+  # Valid keys in Intra-VPC Inspection Routes
+  validation {
+    error_message = "When configuring the routes in intra-VPC inspection routing, the valid key values are: \"source_subnet_route_tables\", \"destination_subnet_cidr_blocks\"."
     condition = alltrue([
-      for c in try(var.routing_configuration.single_vpc_routing_enhacement, {}) : length(setsubtract(keys(try(c, {})), [
-        "route_tables",
-        "cidr_blocks"
+      for c in try(var.routing_configuration.intra_vpc_inspection.routes, {}) : length(setsubtract(keys(try(c, {})), [
+        "source_subnet_route_tables",
+        "destination_subnet_cidr_blocks"
       ])) == 0
     ])
   }
 
   # Valid keys in Central Inspection VPC (without egress traffic)
   validation {
-    error_message = "When configuring the inspecton routing in a central Inspection VPC (without egress traffic), the valid key values are: \"tgw_route_tables\"."
+    error_message = "When configuring the inspecton routing in a central Inspection VPC (without egress traffic), the valid key values are: \"tgw_subnet_route_tables\"."
     condition = length(setsubtract(keys(try(var.routing_configuration.centralized_inspection_without_egress, {})), [
-      "tgw_route_tables"
+      "tgw_subnet_route_tables"
     ])) == 0
   }
 
@@ -186,9 +198,10 @@ EOF
   validation {
     error_message = "When configuring the inspecton routing in a central Inspection VPC (with egress traffic), the valid key values are: \"tgw_route_tables\", \"public_route_tables\", \"network_cidr_blocks\"."
     condition = length(setsubtract(keys(try(var.routing_configuration.centralized_inspection_with_egress, {})), [
-      "tgw_route_tables",
-      "public_route_tables",
+      "tgw_subnet_route_tables",
+      "public_subnet_route_tables",
       "network_cidr_blocks"
     ])) == 0
   }
 }
+

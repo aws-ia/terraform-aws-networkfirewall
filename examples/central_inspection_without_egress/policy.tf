@@ -21,11 +21,11 @@ resource "aws_networkfirewall_firewall_policy" "anfw_policy" {
     stateful_default_actions = ["aws:drop_strict", "aws:alert_strict"]
     stateful_rule_group_reference {
       priority     = 10
-      resource_arn = aws_networkfirewall_rule_group.allow_icmp.arn
+      resource_arn = aws_networkfirewall_rule_group.allow_icmp_1_to_2.arn
     }
     stateful_rule_group_reference {
       priority     = 20
-      resource_arn = aws_networkfirewall_rule_group.allow_domains.arn
+      resource_arn = aws_networkfirewall_rule_group.allow_icmp_2_to_3.arn
     }
   }
 }
@@ -83,15 +83,29 @@ resource "aws_networkfirewall_rule_group" "drop_remote" {
   }
 }
 
-# Stateful Rule Group 1 - Allowing ICMP traffic
-resource "aws_networkfirewall_rule_group" "allow_icmp" {
+# Stateful Rule Group 1 - Allowing ICMP traffic from Spoke VPC 1 to 2
+resource "aws_networkfirewall_rule_group" "allow_icmp_1_to_2" {
   capacity = 100
-  name     = "allow-icmp-${var.identifier}"
+  name     = "allow-icmp-12-${var.identifier}"
   type     = "STATEFUL"
   rule_group {
+    rule_variables {
+      ip_sets {
+        key = "SPOKE1"
+        ip_set {
+          definition = [var.vpcs.spoke-vpc-1.cidr_block]
+        }
+      }
+      ip_sets {
+        key = "SPOKE2"
+        ip_set {
+          definition = [var.vpcs.spoke-vpc-2.cidr_block]
+        }
+      }
+    }
     rules_source {
       rules_string = <<EOF
-      pass icmp any any -> any any (msg: "Allowing ICMP packets"; sid:2; rev:1;)
+      pass icmp $SPOKE1 any -> $SPOKE2 any (msg: "Allowing ICMP packets from Spoke VPC 1 to 2"; sid:2; rev:1;)
       EOF
     }
     stateful_rule_options {
@@ -100,16 +114,29 @@ resource "aws_networkfirewall_rule_group" "allow_icmp" {
   }
 }
 
-# Stateful Rule Group 2 - Allowing access to .amazon.com (HTTPS)
-resource "aws_networkfirewall_rule_group" "allow_domains" {
+# Stateful Rule Group 2 - Allowing ICMP traffic from Spoke VPC 2 to 3
+resource "aws_networkfirewall_rule_group" "allow_icmp_2_to_3" {
   capacity = 100
-  name     = "allow-domains-${var.identifier}"
+  name     = "allow-icmp-23-${var.identifier}"
   type     = "STATEFUL"
   rule_group {
+    rule_variables {
+      ip_sets {
+        key = "SPOKE2"
+        ip_set {
+          definition = [var.vpcs.spoke-vpc-2.cidr_block]
+        }
+      }
+      ip_sets {
+        key = "SPOKE3"
+        ip_set {
+          definition = [var.vpcs.spoke-vpc-3.cidr_block]
+        }
+      }
+    }
     rules_source {
       rules_string = <<EOF
-      pass tcp any any <> $EXTERNAL_NET 443 (msg:"Allowing TCP in port 443"; flow:not_established; sid:892123; rev:1;)
-      pass tls any any -> $EXTERNAL_NET 443 (tls.sni; dotprefix; content:".amazon.com"; endswith; msg:"Allowing .amazon.com HTTPS requests"; sid:892125; rev:1;)
+      pass icmp $SPOKE2 any -> $SPOKE3 any (msg: "Allowing ICMP packets from Spoke VPC 2 to 3"; sid:2; rev:1;)
       EOF
     }
     stateful_rule_options {

@@ -55,7 +55,7 @@ module "network_firewall" {
 
   routing_configuration = {
     centralized_inspection_without_egress = {
-      tgw_route_tables = { for k, v in module.inspection_vpc["inspection-vpc"].route_table_attributes_by_type_by_az.transit_gateway : k => v.id }
+      tgw_subnet_route_tables = { for k, v in module.inspection_vpc["inspection-vpc"].route_table_attributes_by_type_by_az.transit_gateway : k => v.id }
     }
   }
 }
@@ -136,3 +136,37 @@ resource "aws_ec2_transit_gateway_route" "default_route_spoke_to_inspection" {
   transit_gateway_route_table_id = aws_ec2_transit_gateway_route_table.spoke_vpc_route_table.id
 }
 
+# EC2 Instances (in Spoke VPCs)
+module "compute" {
+  for_each = module.spoke_vpcs
+  source   = "./modules/compute"
+
+  identifier               = var.identifier
+  vpc_name                 = each.key
+  vpc_id                   = each.value.vpc_attributes.id
+  vpc_subnets              = { for k, v in each.value.private_subnet_attributes_by_az : k => v.id }
+  number_azs               = var.vpcs[each.key].number_azs
+  instance_type            = var.vpcs[each.key].instance_type
+  ec2_iam_instance_profile = module.iam.ec2_iam_instance_profile
+  ec2_security_group       = local.security_groups.instance
+}
+
+# SSM VPC endpoints (in Spoke VPCs)
+module "vpc_endpoints" {
+  for_each = module.spoke_vpcs
+  source   = "./modules/vpc_endpoints"
+
+  identifier               = var.identifier
+  vpc_name                 = each.key
+  vpc_id                   = each.value.vpc_attributes.id
+  vpc_subnets              = { for k, v in each.value.private_subnet_attributes_by_az : k => v.id }
+  endpoints_security_group = local.security_groups.endpoints
+  endpoints_service_names  = local.endpoint_service_names
+}
+
+# IAM Role for the EC2 instances (access to Systems Manager)
+module "iam" {
+  source = "./modules/iam"
+
+  identifier = var.identifier
+}

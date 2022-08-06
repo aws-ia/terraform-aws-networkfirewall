@@ -4,7 +4,7 @@ variable "aws_region" {
   description = "AWS Region."
   type        = string
 
-  default = "us-east-1"
+  default = "eu-west-1"
 }
 
 variable "identifier" {
@@ -41,6 +41,7 @@ variable "vpcs" {
       private_subnet_netmask = 28
       tgw_subnet_netmask     = 28
       number_azs             = 2
+      instance_type          = "t2.micro"
     }
 
     "spoke-vpc-2" = {
@@ -49,6 +50,7 @@ variable "vpcs" {
       private_subnet_netmask = 24
       tgw_subnet_netmask     = 28
       number_azs             = 2
+      instance_type          = "t2.micro"
     }
   }
 }
