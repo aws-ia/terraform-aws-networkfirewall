@@ -6,7 +6,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/terraform"
 )
 
-func TestExamplesPrivateOnly(t *testing.T) {
+func TestExamplesCentralInspectionEgress(t *testing.T) {
 
 	terraformOptions := &terraform.Options{
 		TerraformDir: "../examples/central_inspection_with_egress",

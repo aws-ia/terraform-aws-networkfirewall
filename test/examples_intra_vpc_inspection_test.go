@@ -6,7 +6,7 @@ import (
 	"github.com/gruntwork-io/terratest/modules/terraform"
 )
 
-func TestExamplesPrivateOnly(t *testing.T) {
+func TestExamplesIntraVPC(t *testing.T) {
 
 	terraformOptions := &terraform.Options{
 		TerraformDir: "../examples/intra_vpc_inspection",
