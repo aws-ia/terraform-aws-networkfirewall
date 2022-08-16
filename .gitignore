@@ -41,7 +41,6 @@ terraform.rc
 go.mod
 go.sum
 
+# DS_Store
 
-# TFLINT
-
-.tflint.hcl
+.DS_Store

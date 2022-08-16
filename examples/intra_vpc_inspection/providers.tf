@@ -1,7 +1,7 @@
 # --- examples/intra_vpc_inspection/providers.tf ---
 
 terraform {
-  required_version = ">= 0.15.0"
+  required_version = ">= 1.0.7"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
