@@ -166,7 +166,7 @@ EOF
     ])) == 0
   }
 
- # Valid keys in Intra-VPC Inspection
+  # Valid keys in Intra-VPC Inspection
   validation {
     error_message = "When configuring the intra-VPC inspecton routing, the valid key values are: \"number_routes\", \"routes\"."
     condition = length(setsubtract(keys(try(var.routing_configuration.intra_vpc_inspection, {})), [

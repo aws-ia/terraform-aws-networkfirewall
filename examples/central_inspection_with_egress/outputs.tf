@@ -9,7 +9,7 @@ output "vpcs" {
   description = "VPCs created."
   value = {
     inspection = module.inspection_vpc["inspection-vpc"].vpc_attributes.id
-    spokes = { for k, v in module.spoke_vpcs : k => v.vpc_attributes.id }
+    spokes     = { for k, v in module.spoke_vpcs : k => v.vpc_attributes.id }
   }
 }
 

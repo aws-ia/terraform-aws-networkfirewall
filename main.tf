@@ -62,8 +62,8 @@ resource "aws_route" "protected_route_table_to_internet" {
 
 # ROUTES: SINGLE VPC INTRA ROUTING
 module "intra_vpc_routing" {
-  count = local.vpc_type == "intra_vpc_inspection" ? var.routing_configuration.intra_vpc_inspection.number_routes : 0
-  source   = "./modules/intra_vpc_routing"
+  count  = local.vpc_type == "intra_vpc_inspection" ? var.routing_configuration.intra_vpc_inspection.number_routes : 0
+  source = "./modules/intra_vpc_routing"
 
   number_azs         = var.number_azs
   availability_zones = local.availability_zones
