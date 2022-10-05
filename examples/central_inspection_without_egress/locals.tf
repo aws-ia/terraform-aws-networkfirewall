@@ -11,14 +11,14 @@ locals {
           from        = -1
           to          = -1
           protocol    = "icmp"
-          cidr_blocks = ["0.0.0.0/0"]
+          cidr_blocks = ["10.0.0.0/8"]
         }
         https = {
           description = "Allowing HTTPS traffic"
           from        = 443
           to          = 443
           protocol    = "tcp"
-          cidr_blocks = ["0.0.0.0/0"]
+          cidr_blocks = ["10.0.0.0/8"]
         }
       }
       egress = {
@@ -40,7 +40,7 @@ locals {
           from        = 443
           to          = 443
           protocol    = "tcp"
-          cidr_blocks = ["0.0.0.0/0"]
+          cidr_blocks = ["10.0.0.0/8"]
         }
       }
       egress = {

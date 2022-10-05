@@ -36,7 +36,7 @@ Once the AWS Network Firewall resource is created, the routing to the firewall e
 The first use case is when the firewall endpoints are located in the VPC to inspect the traffic from/to workloads in that same VPC - distributed inspection model. If using this routing configuration (`simple_vpc`) it is expected to place the firewall endpoints in subnets between the Internet gateway (IGW) and the public subnets (where you can place the Elastic Load Balancers and NAT gateways). The image below shows an example of the architecture, routing configuration, and traffic flow.
 
 <p align="center">
-  <img src="./images/single_vpc.png" alt="Single VPC - Architecture diagram" width="100%">
+  <img src="./images/single\_vpc.png" alt="Single VPC - Architecture diagram" width="100%">
 </p>
 
 An example of the definition of this routing configuration is the following one:
@@ -64,7 +64,7 @@ routing_configuration = {
 When placing firewall endpoints to inspect traffic between workloads inside the same VPC (between your EC2 instances and the database layer, for example) you can take advantage of the VPC routing enhacement - which allows you to include more specific routing than the local one (`intra_vpc_inspection`). The image below shows an example of the architecture, routing configuration, and traffic flow.
 
 <p align="center">
-  <img src="./images/single_vpc_intra_subnet.png" alt="Intra-VPC Inspection - Architecture diagram" width="100%">
+  <img src="./images/single\_vpc\_intra\_subnet.png" alt="Intra-VPC Inspection - Architecture diagram" width="100%">
 </p>
 
 The module expects in this variable two variables:
@@ -113,7 +113,7 @@ routing_configuration = {
 The use case covers the creation of a centralized Inspection VPC in a Hub and Spoke architecture with AWS Transit Gateway, with the idea of managing the traffic inspection at scale. When using the key `centralized_inspection_without_egress` it is supposed that the Inspection VPC created is only used to place the AWS Transit Gateway ENIs and the firewall endpoints. The image below shows an example of the architecture, routing configuration, and traffic flow.
 
 <p align="center">
-  <img src="./images/centralized_vpc.png" alt="Central Inspection VPC - Architecture diagram" width="100%">
+  <img src="./images/centralized\_vpc.png" alt="Central Inspection VPC - Architecture diagram" width="100%">
 </p>
 
 An example of the definition of this routing configuration is the following one:
@@ -135,7 +135,7 @@ routing_configuration = {
 The use case covers the creation of a centralized Inspection VPC in a Hub and Spoke architecture with AWS Transit Gateway, with the idea of managing the traffic inspection at scale. When using the key `centralized_inspection_with_egress` it is supposed that the Inspection VPC also has access to the Internet, to centralize inspection and egress traffic at the same time. The image below shows an example of the architecture, routing configuration, and traffic flow.
 
 <p align="center">
-  <img src="./images/centralized_vpc_with_egress.png" alt="Central Inspection VPC with Egress traffic - Architecture diagram" width="100%">
+  <img src="./images/centralized\_vpc\_with\_egress.png" alt="Central Inspection VPC with Egress traffic - Architecture diagram" width="100%">
 </p>
 
 An example of the definition of this routing configuration is the following one:
@@ -168,15 +168,15 @@ routing_configuration = {
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.15.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4.0.0, < 5.0.0 |
-| <a name="requirement_awscc"></a> [awscc](#requirement\_awscc) | >= 0.24.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 3.73.0 |
+| <a name="requirement_awscc"></a> [awscc](#requirement\_awscc) | >= 0.15.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4.0.0, < 5.0.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 3.73.0 |
 
 ## Modules
 

@@ -11,14 +11,14 @@ locals {
           from        = -1
           to          = -1
           protocol    = "icmp"
-          cidr_blocks = ["0.0.0.0/0"]
+          cidr_blocks = [var.vpc.cidr_block]
         }
         https = {
           description = "Allowing HTTPS traffic"
           from        = 443
           to          = 443
           protocol    = "tcp"
-          cidr_blocks = ["0.0.0.0/0"]
+          cidr_blocks = [var.vpc.cidr_block]
         }
       }
       egress = {
