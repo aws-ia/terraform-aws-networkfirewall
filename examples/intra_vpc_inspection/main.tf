@@ -61,6 +61,7 @@ module "network_firewall" {
 }
 
 # Security Groups
+#tfsec:ignore:custom-custom-cus005 tfsec:ignore:custom-custom-cus004
 resource "aws_security_group" "security_group" {
   for_each = local.security_groups
 

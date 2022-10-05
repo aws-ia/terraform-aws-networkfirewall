@@ -11,14 +11,14 @@ locals {
           from        = -1
           to          = -1
           protocol    = "icmp"
-          cidr_blocks = [var.vpc.cidr_block]
+          cidr_blocks = [var.vpc.cidr_block] #tfsec:ignore:aws-vpc-no-public-ingress-sgr
         }
         https = {
           description = "Allowing HTTPS traffic"
           from        = 443
           to          = 443
           protocol    = "tcp"
-          cidr_blocks = [var.vpc.cidr_block]
+          cidr_blocks = [var.vpc.cidr_block] #tfsec:ignore:aws-vpc-no-public-ingress-sgr
         }
       }
       egress = {
@@ -27,7 +27,7 @@ locals {
           from        = 0
           to          = 0
           protocol    = "-1"
-          cidr_blocks = [var.vpc.cidr_block]
+          cidr_blocks = [var.vpc.cidr_block] #tfsec:ignore:aws-vpc-no-public-egress-sgr
         }
       }
     }
@@ -40,7 +40,7 @@ locals {
           from        = 443
           to          = 443
           protocol    = "tcp"
-          cidr_blocks = [var.vpc.cidr_block]
+          cidr_blocks = [var.vpc.cidr_block] #tfsec:ignore:aws-vpc-no-public-ingress-sgr
         }
       }
       egress = {
@@ -49,7 +49,7 @@ locals {
           from        = 0
           to          = 0
           protocol    = "-1"
-          cidr_blocks = [var.vpc.cidr_block]
+          cidr_blocks = [var.vpc.cidr_block] #tfsec:ignore:aws-vpc-no-public-egress-sgr
         }
       }
     }

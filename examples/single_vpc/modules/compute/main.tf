@@ -27,6 +27,7 @@ locals {
 }
 
 # Security Group - EC2 instance
+#tfsec:ignore:custom-custom-cus005 tfsec:ignore:custom-custom-cus004
 resource "aws_security_group" "spoke_vpc_sg" {
   name        = var.ec2_security_group.name
   description = var.ec2_security_group.description
