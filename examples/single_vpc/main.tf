@@ -34,35 +34,4 @@ module "network_firewall" {
   }
 }
 
-# EC2 Instances
-module "compute" {
-  source = "./modules/compute"
-
-  identifier               = var.identifier
-  vpc_id                   = module.vpc.vpc_id
-  vpc_subnets              = module.vpc.subnet_ids.private
-  number_azs               = var.vpc.number_azs
-  instance_type            = var.vpc.instance_type
-  ec2_iam_instance_profile = module.iam.ec2_iam_instance_profile
-  ec2_security_group       = local.security_groups.instance
-}
-
-# VPC Endpoints (for SSM access)
-module "vpc_endpoints" {
-  source = "./modules/vpc_endpoints"
-
-  identifier               = var.identifier
-  vpc_id                   = module.vpc.vpc_id
-  vpc_subnets              = module.vpc.subnet_ids.private
-  endpoints_security_group = local.security_groups.endpoints
-  endpoints_service_names  = local.endpoint_service_names
-}
-
-# IAM Role for the EC2 instances (access to Systems Manager)
-module "iam" {
-  source = "./modules/iam"
-
-  identifier = var.identifier
-}
-
 

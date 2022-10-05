@@ -33,7 +33,6 @@ variable "vpcs" {
       private_subnet_netmask = 28
       tgw_subnet_netmask     = 28
       number_azs             = 2
-      instance_type          = "t2.micro"
     }
 
     "spoke-vpc-2" = {
@@ -42,7 +41,6 @@ variable "vpcs" {
       private_subnet_netmask = 24
       tgw_subnet_netmask     = 28
       number_azs             = 2
-      instance_type          = "t2.micro"
     }
 
     "spoke-vpc-3" = {
@@ -51,7 +49,6 @@ variable "vpcs" {
       private_subnet_netmask = 24
       tgw_subnet_netmask     = 28
       number_azs             = 2
-      instance_type          = "t2.micro"
     }
   }
 }

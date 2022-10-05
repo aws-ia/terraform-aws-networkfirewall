@@ -27,7 +27,6 @@ variable "vpc" {
     }
     firewall_subnet_cidrs = ["10.129.9.0/28", "10.129.9.16/28", "10.129.9.32/28"]
     endpoint_subnet_cidrs = ["10.129.9.48/28", "10.129.9.64/28", "10.129.9.80/28"]
-    instance_type         = "t2.micro"
   }
 }
 

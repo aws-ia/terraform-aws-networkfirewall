@@ -17,13 +17,3 @@ output "network_firewall" {
   description = "AWS Network Firewall ID."
   value       = module.network_firewall.aws_network_firewall.id
 }
-
-output "ec2_instances" {
-  description = "EC2 Instances ID."
-  value       = { for k, v in module.compute : k => { for az, ec2 in v.ec2_instances : az => ec2.id } }
-}
-
-output "vpc_endpoints" {
-  description = "VPC Endpoints ID."
-  value       = { for k, v in module.vpc_endpoints : k => v.endpoint_ids }
-}
