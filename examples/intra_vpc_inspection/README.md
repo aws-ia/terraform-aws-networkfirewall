@@ -1,13 +1,16 @@
 <!-- BEGIN_TF_DOCS -->
 # AWS Network Firewall Module - Intra-VPC Inspection
 
-This example builds AWS Network Firewall in a single VPC to perform intra-VPC inspection between its subnets. The image below shows an example of the architecture, routing configuration, and traffic flow.
+This example builds AWS Network Firewall in a single VPC to perform intra-VPC inspection between its subnets. This example creates the following resources:
 
-<p align="center">
-  <img src="../../images/single\_vpc\_intra\_subnet.png" alt="Intra-VPC Inspection - Architecture diagram" width="100%">
-</p>
+* Outside of the Network Firewall module:
+  * Firewall policies - in `policy.tf`
+  * Amazon VPC with several subnets (3 private subnets, 1 inspection subnet, 1 endpoints subnet)
+* Created by the Network Firewall mdodule:
+  * AWS Network Firewall resource.
+  * Routing to the firewall endpoints - to inspect traffic between the private subnets.
 
-You can check the firewall policy applied in the *policy.tf* file.
+The AWS Region used in the example is **eu-west-2 (London)**.
 
 ## Prerequisites
 
@@ -37,7 +40,7 @@ You can check the firewall policy applied in the *policy.tf* file.
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 3.73.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.35.0 |
 
 ## Modules
 

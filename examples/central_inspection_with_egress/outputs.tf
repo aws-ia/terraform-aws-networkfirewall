@@ -5,12 +5,9 @@ output "transit_gateway" {
   value       = aws_ec2_transit_gateway.tgw.id
 }
 
-output "vpcs" {
+output "inspection_vpc" {
   description = "VPCs created."
-  value = {
-    inspection = module.inspection_vpc["inspection-vpc"].vpc_attributes.id
-    spokes     = { for k, v in module.spoke_vpcs : k => v.vpc_attributes.id }
-  }
+  value       = module.inspection_vpc.vpc_attributes.id
 }
 
 output "network_firewall" {

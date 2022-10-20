@@ -1,13 +1,16 @@
 <!-- BEGIN_TF_DOCS -->
 # AWS Network Firewall Module - Single VPC
 
-This example builds AWS Network Firewall in a single VPC to inspect any ingress/egress traffic - distributed inspection model. The firewall endpoints are placed in subnets between the Internet gateway (IGW) and the public subnets (where you can place the Elastic Load Balancers and NAT gateways). The image below shows an example of the architecture, routing configuration, and traffic flow.
+This example builds AWS Network Firewall in a single VPC to inspect any ingress/egress traffic - distributed inspection model.
 
-<p align="center">
-  <img src="../../images/single\_vpc.png" alt="Single VPC - Architecture diagram" width="100%">
-</p>
+* Outside of the Network Firewall module:
+  * Firewall policies - in `policy.tf`
+  * Amazon VPC with 3 subnet types (firewall, protected, and private)
+* Created by the Network Firewall mdodule:
+  * AWS Network Firewall resource.
+  * Routing to the firewall endpoints - to inspect traffic between the Internet gateway and the protected subnets)
 
-The AWS Region used in the example is **us-east-2 (Ohio)**, and the instances placed in the "protected" subnets can ping anything in the Internet and access any HTTPS domain to *.amazon.com - other traffic is dropped.
+The AWS Region used in the example is **us-east-2 (Ohio)**.
 
 ## Prerequisites
 
@@ -61,7 +64,7 @@ The AWS Region used in the example is **us-east-2 (Ohio)**, and the instances pl
 |------|-------------|------|---------|:--------:|
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | AWS Region. | `string` | `"us-east-2"` | no |
 | <a name="input_identifier"></a> [identifier](#input\_identifier) | Project identifier. | `string` | `"single-vpc"` | no |
-| <a name="input_vpc"></a> [vpc](#input\_vpc) | Information about the VPC to create. | `any` | <pre>{<br>  "cidr_block": "10.129.0.0/16",<br>  "firewall_subnet_cidrs": [<br>    "10.129.0.0/24",<br>    "10.129.1.0/24",<br>    "10.129.2.0/24"<br>  ],<br>  "instance_type": "t2.micro",<br>  "number_azs": 2,<br>  "private_subnet_cidrs": [<br>    "10.129.6.0/24",<br>    "10.129.7.0/24",<br>    "10.129.8.0/24"<br>  ],<br>  "protected_subnet_cidrs": [<br>    "10.129.3.0/24",<br>    "10.129.4.0/24",<br>    "10.129.5.0/24"<br>  ]<br>}</pre> | no |
+| <a name="input_vpc"></a> [vpc](#input\_vpc) | Information about the VPC to create. | `any` | <pre>{<br>  "cidr_block": "10.129.0.0/16",<br>  "firewall_subnet_cidrs": [<br>    "10.129.0.0/24",<br>    "10.129.1.0/24",<br>    "10.129.2.0/24"<br>  ],<br>  "number_azs": 2,<br>  "private_subnet_cidrs": [<br>    "10.129.6.0/24",<br>    "10.129.7.0/24",<br>    "10.129.8.0/24"<br>  ],<br>  "protected_subnet_cidrs": [<br>    "10.129.3.0/24",<br>    "10.129.4.0/24",<br>    "10.129.5.0/24"<br>  ]<br>}</pre> | no |
 
 ## Outputs
 
