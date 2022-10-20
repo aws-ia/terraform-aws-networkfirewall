@@ -93,13 +93,13 @@ resource "aws_networkfirewall_rule_group" "allow_icmp_1_to_2" {
       ip_sets {
         key = "SPOKE1"
         ip_set {
-          definition = [var.vpcs.spoke-vpc-1.cidr_block]
+          definition = ["10.0.0.0/24"]
         }
       }
       ip_sets {
         key = "SPOKE2"
         ip_set {
-          definition = [var.vpcs.spoke-vpc-2.cidr_block]
+          definition = ["10.0.1.0/24"]
         }
       }
     }
@@ -124,13 +124,13 @@ resource "aws_networkfirewall_rule_group" "allow_icmp_2_to_3" {
       ip_sets {
         key = "SPOKE2"
         ip_set {
-          definition = [var.vpcs.spoke-vpc-2.cidr_block]
+          definition = ["10.0.1.0/24"]
         }
       }
       ip_sets {
         key = "SPOKE3"
         ip_set {
-          definition = [var.vpcs.spoke-vpc-3.cidr_block]
+          definition = ["10.0.2.0/24"]
         }
       }
     }
