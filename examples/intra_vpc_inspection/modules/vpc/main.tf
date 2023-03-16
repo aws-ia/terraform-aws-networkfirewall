@@ -30,15 +30,15 @@ locals {
 }
 
 # VPC
-resource "awscc_ec2_vpc" "vpc" {
+resource "aws_vpc" "vpc" {
   cidr_block           = var.cidr_block
   enable_dns_hostnames = true
   enable_dns_support   = true
   instance_tenancy     = "default"
 
-  tags = [
-    { "key" = "Name", "value" = "vpc-${var.identifier}" }
-  ]
+  tags = {
+    Name = "vpc-${var.identifier}"
+  }
 }
 
 # SUBNETS
@@ -46,7 +46,7 @@ resource "awscc_ec2_vpc" "vpc" {
 resource "aws_subnet" "private1" {
   for_each = local.private1_subnets
 
-  vpc_id            = awscc_ec2_vpc.vpc.vpc_id
+  vpc_id            = aws_vpc.vpc.id
   availability_zone = each.key
   cidr_block        = each.value
 
@@ -59,7 +59,7 @@ resource "aws_subnet" "private1" {
 resource "aws_subnet" "private2" {
   for_each = local.private2_subnets
 
-  vpc_id            = awscc_ec2_vpc.vpc.vpc_id
+  vpc_id            = aws_vpc.vpc.id
   availability_zone = each.key
   cidr_block        = each.value
 
@@ -72,7 +72,7 @@ resource "aws_subnet" "private2" {
 resource "aws_subnet" "private3" {
   for_each = local.private3_subnets
 
-  vpc_id            = awscc_ec2_vpc.vpc.vpc_id
+  vpc_id            = aws_vpc.vpc.id
   availability_zone = each.key
   cidr_block        = each.value
 
@@ -85,7 +85,7 @@ resource "aws_subnet" "private3" {
 resource "aws_subnet" "firewall" {
   for_each = local.firewall_subnets
 
-  vpc_id            = awscc_ec2_vpc.vpc.vpc_id
+  vpc_id            = aws_vpc.vpc.id
   availability_zone = each.key
   cidr_block        = each.value
 
@@ -98,7 +98,7 @@ resource "aws_subnet" "firewall" {
 resource "aws_subnet" "endpoint" {
   for_each = local.endpoint_subnets
 
-  vpc_id            = awscc_ec2_vpc.vpc.vpc_id
+  vpc_id            = aws_vpc.vpc.id
   availability_zone = each.key
   cidr_block        = each.value
 
@@ -109,91 +109,91 @@ resource "aws_subnet" "endpoint" {
 
 # ROUTE TABLES
 # Private subnets 1
-resource "awscc_ec2_route_table" "private1_rt" {
+resource "aws_route_table" "private1_rt" {
   for_each = local.private1_subnets
 
-  vpc_id = awscc_ec2_vpc.vpc.vpc_id
+  vpc_id = aws_vpc.vpc.id
 
-  tags = [
-    { "key" = "Name", "value" = "private1-rt-${each.key}" }
-  ]
+  tags = {
+    Name = "private1-rt-${each.key}"
+  }
 }
 
-resource "awscc_ec2_subnet_route_table_association" "private1_rt_association" {
+resource "aws_route_table_association" "private1_rt_association" {
   for_each = local.private1_subnets
 
-  route_table_id = awscc_ec2_route_table.private1_rt[each.key].id
+  route_table_id = aws_route_table.private1_rt[each.key].id
   subnet_id      = aws_subnet.private1[each.key].id
 }
 
 # Private subnets 2
-resource "awscc_ec2_route_table" "private2_rt" {
+resource "aws_route_table" "private2_rt" {
   for_each = local.private2_subnets
 
-  vpc_id = awscc_ec2_vpc.vpc.vpc_id
+  vpc_id = aws_vpc.vpc.id
 
-  tags = [
-    { "key" = "Name", "value" = "private2-rt-${each.key}" }
-  ]
+  tags = {
+    Name = "private2-rt-${each.key}"
+  }
 }
 
-resource "awscc_ec2_subnet_route_table_association" "private2_rt_association" {
+resource "aws_route_table_association" "private2_rt_association" {
   for_each = local.private2_subnets
 
-  route_table_id = awscc_ec2_route_table.private2_rt[each.key].id
+  route_table_id = aws_route_table.private2_rt[each.key].id
   subnet_id      = aws_subnet.private2[each.key].id
 }
 
 # Private subnets 3
-resource "awscc_ec2_route_table" "private3_rt" {
+resource "aws_route_table" "private3_rt" {
   for_each = local.private1_subnets
 
-  vpc_id = awscc_ec2_vpc.vpc.vpc_id
+  vpc_id = aws_vpc.vpc.id
 
-  tags = [
-    { "key" = "Name", "value" = "private3-rt-${each.key}" }
-  ]
+  tags = {
+    Name = "private3-rt-${each.key}"
+  }
 }
 
-resource "awscc_ec2_subnet_route_table_association" "private3_rt_association" {
+resource "aws_route_table_association" "private3_rt_association" {
   for_each = local.private3_subnets
 
-  route_table_id = awscc_ec2_route_table.private3_rt[each.key].id
+  route_table_id = aws_route_table.private3_rt[each.key].id
   subnet_id      = aws_subnet.private3[each.key].id
 }
 
 # Firewall subnets
-resource "awscc_ec2_route_table" "firewall_rt" {
+resource "aws_route_table" "firewall_rt" {
   for_each = local.firewall_subnets
 
-  vpc_id = awscc_ec2_vpc.vpc.vpc_id
+  vpc_id = aws_vpc.vpc.id
 
-  tags = [
-    { "key" = "Name", "value" = "firewall-rt-${each.key}" }
-  ]
+  tags = {
+    Name = "firewall-rt-${each.key}"
+  }
 }
 
-resource "awscc_ec2_subnet_route_table_association" "firewall_rt_association" {
+resource "aws_route_table_association" "firewall_rt_association" {
   for_each = local.firewall_subnets
 
-  route_table_id = awscc_ec2_route_table.firewall_rt[each.key].id
+  route_table_id = aws_route_table.firewall_rt[each.key].id
   subnet_id      = aws_subnet.firewall[each.key].id
 }
 
 # Endpoint subnets
-resource "awscc_ec2_route_table" "endpoint_rt" {
+resource "aws_route_table" "endpoint_rt" {
   for_each = local.endpoint_subnets
 
-  vpc_id = awscc_ec2_vpc.vpc.vpc_id
+  vpc_id = aws_vpc.vpc.id
 
-  tags = [
-    { "key" = "Name", "value" = "endpoint-rt-${each.key}" }
-  ]
+  tags = {
+    Name = "endpoint-rt-${each.key}"
+  }
 }
 
-resource "awscc_ec2_subnet_route_table_association" "endpoint_rt_association" {
+resource "aws_route_table_association" "endpoint_rt_association" {
   for_each = local.endpoint_subnets
 
-  route_table_id = awscc_ec2_route_table.endpoint_rt[each.key].id
+  route_table_id = aws_route_table.endpoint_rt[each.key].id
   subnet_id      = aws_subnet.endpoint[each.key].id
 }

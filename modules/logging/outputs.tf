@@ -1,0 +1,1 @@
+# --- modules/logging/outputs.tf ---

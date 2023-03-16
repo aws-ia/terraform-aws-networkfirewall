@@ -1,4 +1,4 @@
-# --- examples/intra_vpc_inspection/modules/vpc/providers.tf ---
+# --- modules/logging/providers.tf ---
 
 terraform {
   required_version = ">= 0.15.0"

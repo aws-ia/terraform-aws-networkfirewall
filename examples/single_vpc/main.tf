@@ -14,6 +14,21 @@ module "vpc" {
   }
 }
 
+# Logging Resources
+resource "aws_s3_bucket" "logs" {
+  bucket_prefix = "anfw-logging-bucket"
+  acl           = "private"
+
+  versioning {
+    enabled = true
+  }
+  force_destroy = true
+}
+
+resource "aws_cloudwatch_log_group" "anfw_logs" {
+  name = "ANFWLogs"
+}
+
 # AWS Network Firewall
 module "network_firewall" {
   source  = "aws-ia/networkfirewall/aws"
@@ -31,6 +46,20 @@ module "network_firewall" {
       igw_route_table               = module.vpc.route_table_ids.igw
       protected_subnet_route_tables = module.vpc.route_table_ids.protected
       protected_subnet_cidr_blocks  = module.vpc.subnet_cidrs.protected
+    }
+  }
+
+  logging_configuration = {
+    flow_log_destination = {
+      s3_bucket = {
+        bucketName = aws_s3_bucket.logs.id
+        logPrefix  = "logs"
+      }
+    }
+    alert_log_destination = {
+      cloudwatch_logs = {
+        logGroupName = aws_cloudwatch_log_group.anfw_logs.name
+      }
     }
   }
 }

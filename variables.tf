@@ -205,3 +205,94 @@ EOF
   }
 }
 
+variable "logging_configuration" {
+  type        = any
+  default     = {}
+  description = <<-EOF
+  Configuration of the logging desired for the Network Firewall. At most 2 configurations can exist, 1 destination for FLOW logs and 1 for ALERT logs.
+  More information about the differences between each of the Logging types can be checked in the README. 
+  Example definition of each type: 
+  ```
+    logging_configuration = {
+      flow_log_configuration {
+        s3_bucket = {
+          bucketName = "my-bucket"
+          logPrefix = "/logs"
+        }
+      }
+    }
+
+    logging_configuration = {
+      alert_log_configuration = {
+        cloudwatch_logs = {
+          logGroupName = "my-log-group"
+        }
+      }
+    }
+
+    logging_configuration = {
+      alert_log_configuration = {
+        kinesis_firehose = {
+          deliveryStreamName = "my-stream"
+        }
+      }
+    }
+  ```
+  EOF
+
+  # You cannot specify other keys than the ones allowed
+  validation {
+    error_message = "Valid keys in var.logging_configuration: \"flow_log_configuration\", \"alert_log_configuration\"."
+    condition = length(
+      setsubtract(
+        setunion(keys(var.logging_configuration), ["flow_log_destination", "alert_log_destination"]),
+        ["flow_log_destination", "alert_log_destination"]
+      )
+    ) == 0
+  }
+
+  # You cannot specify other keys than the logging destination supported
+  validation {
+    error_message = "Valid keys within \"flow_log_configuration\", \"alert_log_configuration\" are: \"s3_bucket\", \"cloudwatch_logs\", \"kinesis_firehose\"."
+    condition = length(
+      setsubtract(
+        setunion(distinct(flatten([for c in var.logging_configuration : keys(c)])), ["s3_bucket", "cloudwatch_logs", "kinesis_firehose"]),
+        ["s3_bucket", "cloudwatch_logs", "kinesis_firehose"]
+      )
+    ) == 0
+  }
+
+  # You cannot specify other keys than the supported by S3
+  validation {
+    error_message = "Valid keys within \"s3_bucket\", are: \"bucketName\", \"logPrefix\"."
+    condition = length(
+      setsubtract(
+        setunion(distinct(flatten([for c in var.logging_configuration : keys(try(c.s3_bucket, {}))])), ["bucketName", "logPrefix"]),
+        ["bucketName", "logPrefix"]
+      )
+    ) == 0
+  }
+
+  # You cannot specify other keys than the supported by CWLogs
+  validation {
+    error_message = "Valid keys within \"cloudwatch_logs\", are: \"logGroupName\"."
+    condition = length(
+      setsubtract(
+        setunion(distinct(flatten([for c in var.logging_configuration : keys(try(c.cloudwatch_logs, {}))])), ["logGroupName"]),
+        ["logGroupName"]
+      )
+    ) == 0
+  }
+
+  # You cannot specify other keys than the supported by Kinesis Firehose
+  validation {
+    error_message = "Valid keys within \"kinesis_firehose\", are: \"deliveryStreamName\"."
+    condition = length(
+      setsubtract(
+        setunion(distinct(flatten([for c in var.logging_configuration : keys(try(c.kinesis_firehose, {}))])), ["deliveryStreamName"]),
+        ["deliveryStreamName"]
+      )
+    ) == 0
+  }
+}
+
