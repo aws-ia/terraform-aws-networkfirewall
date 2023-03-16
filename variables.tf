@@ -214,7 +214,7 @@ variable "logging_configuration" {
   Example definition of each type: 
   ```
     logging_configuration = {
-      flow_log_configuration {
+      flow_log_configuration = {
         s3_bucket = {
           bucketName = "my-bucket"
           logPrefix = "/logs"
