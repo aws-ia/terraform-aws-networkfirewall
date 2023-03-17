@@ -48,7 +48,7 @@ The AWS Region used in the example is **eu-west-1 (Ireland)**.
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_inspection_vpc"></a> [inspection\_vpc](#module\_inspection\_vpc) | aws-ia/vpc/aws | = 4.0.0 |
-| <a name="module_network_firewall"></a> [network\_firewall](#module\_network\_firewall) | aws-ia/networkfirewall/aws | 0.1.2 |
+| <a name="module_network_firewall"></a> [network\_firewall](#module\_network\_firewall) | aws-ia/networkfirewall/aws | 0.1.1 |
 
 ## Resources
 

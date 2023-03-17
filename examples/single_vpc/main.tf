@@ -29,10 +29,8 @@ resource "aws_cloudwatch_log_group" "flow_lg" {
 
 # AWS Network Firewall
 module "network_firewall" {
-  #source  = "aws-ia/networkfirewall/aws"
-  #version = "0.1.2"
-
-  source = "../.."
+  source  = "aws-ia/networkfirewall/aws"
+  version = "0.1.1"
 
   network_firewall_name   = "anfw-${var.identifier}"
   network_firewall_policy = aws_networkfirewall_firewall_policy.anfw_policy.arn

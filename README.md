@@ -149,14 +149,14 @@ For more information about the logging in AWS Network Firewall, check the [AWS N
 
 ```hcl
 logging_configuration = {
-  flow_log_configuration = {
+  flow_log = {
     s3_bucket = {
       bucketName = "my-bucket"
       logPrefix = "/logs"
     }
   }
 
-  alert_log_configuration = {
+  alert_log = {
     cloudwatch_logs = {
       logGroupName = "my-log-group"
     }
