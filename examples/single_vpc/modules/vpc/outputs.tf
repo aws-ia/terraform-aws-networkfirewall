@@ -2,7 +2,7 @@
 
 output "vpc_id" {
   description = "VPC ID."
-  value       = awscc_ec2_vpc.vpc.vpc_id
+  value       = aws_vpc.vpc.id
 }
 
 output "subnet_ids" {
@@ -26,14 +26,14 @@ output "subnet_cidrs" {
 output "route_table_ids" {
   description = "Route Table IDs."
   value = {
-    igw       = awscc_ec2_route_table.igw_rt.id
-    firewall  = { for k, v in awscc_ec2_route_table.firewall_rt : k => v.id }
-    protected = { for k, v in awscc_ec2_route_table.protected_rt : k => v.id }
-    private   = { for k, v in awscc_ec2_route_table.private_rt : k => v.id }
+    igw       = aws_route_table.igw_rt.id
+    firewall  = { for k, v in aws_route_table.firewall_rt : k => v.id }
+    protected = { for k, v in aws_route_table.protected_rt : k => v.id }
+    private   = { for k, v in aws_route_table.private_rt : k => v.id }
   }
 }
 
 output "nat_gateways" {
   description = "NAT gateways."
-  value       = { for k, v in awscc_ec2_nat_gateway.natgw : k => v.id }
+  value       = { for k, v in aws_nat_gateway.natgw : k => v.id }
 }

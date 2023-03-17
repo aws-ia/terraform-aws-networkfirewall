@@ -137,6 +137,33 @@ routing_configuration = {
 }
 ```
 
+## Logging
+
+You can enable AWS Network Firewall logging for the stateful engine. You can record the flow logs and/or alert logs, with only one destination per log type:
+
+* Amazon S3 bucket.
+* Amazon CloudWatch log group.
+* Amazon Kinesis Data Firehose stream.
+
+For more information about the logging in AWS Network Firewall, check the [AWS Network Firewall documentation](https://docs.aws.amazon.com/network-firewall/latest/developerguide/firewall-logging.html).
+
+```hcl
+logging_configuration = {
+  flow_log_configuration = {
+    s3_bucket = {
+      bucketName = "my-bucket"
+      logPrefix = "/logs"
+    }
+  }
+
+  alert_log_configuration = {
+    cloudwatch_logs = {
+      logGroupName = "my-log-group"
+    }
+  }
+}
+```
+
 ## References
 
 - Reference Architecture: [Inspection Deployment models with with AWS Network Firewall](https://d1.awsstatic.com/architecture-diagrams/ArchitectureDiagrams/inspection-deployment-models-with-AWS-network-firewall-ra.pdf)
@@ -149,13 +176,12 @@ routing_configuration = {
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 3.73.0 |
-| <a name="requirement_awscc"></a> [awscc](#requirement\_awscc) | >= 0.15.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.33.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 3.73.0 |
 
 ## Modules
 
@@ -163,6 +189,7 @@ routing_configuration = {
 |------|--------|---------|
 | <a name="module_central_inspection_with_egress_routing"></a> [central\_inspection\_with\_egress\_routing](#module\_central\_inspection\_with\_egress\_routing) | ./modules/central_inspection_with_egress_routing | n/a |
 | <a name="module_intra_vpc_routing"></a> [intra\_vpc\_routing](#module\_intra\_vpc\_routing) | ./modules/intra_vpc_routing | n/a |
+| <a name="module_logging"></a> [logging](#module\_logging) | ./modules/logging | n/a |
 | <a name="module_tags"></a> [tags](#module\_tags) | aws-ia/label/aws | 0.0.5 |
 
 ## Resources
@@ -185,6 +212,7 @@ routing_configuration = {
 | <a name="input_routing_configuration"></a> [routing\_configuration](#input\_routing\_configuration) | Configuration of the routing desired in the VPC. Depending the type of VPC, the information to provide is different. The type of VPCs supported are: `single_vpc`, `intra_vpc_inspection`, `centralized_inspection_without_egress`, and `centralized_inspection_with_egress`. **Only one key (option) can be defined**<br>More information about the differences between each of the VPC types can be checked in the README. Example definition of each type (supposing us-east-1 as AWS Region):<pre>routing_configuration = { <br>  single_vpc = { <br>    igw_route_table = rtb-ID<br>    protected_subnet_route_tables = { <br>      us-east-1a = rtb-IDa<br>      us-east-1b = rtb-IDb<br>      us-east-1c = rtb-IDc<br>    }<br>    protected_subnet_cidr_blocks = {<br>      us-east-1a = "10.0.0.0/24"<br>      us-east-1b = "10.0.1.0/24"<br>      us-east-1c = "10.0.2.0/24"<br>    }<br>  }<br>}<br><br>routing_configuration = { <br>  intra_vpc_inspection = {<br>    number_routes = 2<br>    routes = {<br>      { <br>        source_subnet_route_tables = { <br>          us-east-1a = rtb-IDa<br>          us-east-1b = rtb-IDb<br>          us-east-1c = rtb-IDc<br>        }<br>        destination_subnet_cidr_blocks = {<br>          us-east-1a = "10.0.0.0/24"<br>          us-east-1b = "10.0.1.0/24"<br>          us-east-1c = "10.0.2.0/24"<br>        }<br>      },<br>      {<br>        source_subnet_route_tables = { <br>          us-east-1a = rtb-IDaa<br>          us-east-1b = rtb-IDbb<br>          us-east-1c = rtb-IDcc<br>        }<br>        destination_subnet_cidr_blocks = {<br>          us-east-1a = "10.0.3.0/24"<br>          us-east-1b = "10.0.4.0/24"<br>          us-east-1c = "10.0.5.0/24"<br>        }<br>      }<br>    }<br>  }<br>}<br><br>routing_configuration = {<br>  centralized_inspection_without_egress = { <br>    tgw_subnet_route_tables = { <br>      us-east-1a = rtb-IDa<br>      us-east-1b = rtb-IDb<br>      us-east-1c = rtb-IDc<br>    }<br>  }<br>}<br><br>routing_configuration = {<br>  centralized_inspection_with_egress = {<br>    tgw_route_tables = { <br>      us-east-1a = rtb-IDa<br>      us-east-1b = rtb-IDb<br>      us-east-1c = rtb-IDc<br>    }<br>    public_route_tables = {<br>      us-east-1a = rtb-IDaa<br>      us-east-1b = rtb-IDbb<br>      us-east-1c = rtb-IDcc<br>    }<br>    network_cidr_blocks = ["10.0.0.0/8", "192.168.0.0/24"]<br>  }<br>}</pre> | `any` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC ID to place the Network Firewall endpoints. | `string` | n/a | yes |
 | <a name="input_vpc_subnets"></a> [vpc\_subnets](#input\_vpc\_subnets) | Map of subnet IDs to place the Network Firewall endpoints. The expected format of the map is the Availability Zone as key, and the ID of the subnet as value.<br>Example (supposing us-east-1 as AWS Region):<pre>vpc_subnets = {<br>    us-east-1a = subnet-IDa<br>    us-east-1b = subnet-IDb<br>    us-east-1c = subnet-IDc<br>}</pre> | `map(string)` | n/a | yes |
+| <a name="input_logging_configuration"></a> [logging\_configuration](#input\_logging\_configuration) | Configuration of the logging desired for the Network Firewall. You can configure at most 2 destinations for your logs, 1 for FLOW logs and 1 for ALERT logs. Example definition of each type:<pre>logging_configuration = {<br>    flow_log = {<br>      s3_bucket = {<br>        bucketName = "my-bucket"<br>        logPrefix = "/logs"<br>      }<br>    }<br>  }<br><br>  logging_configuration = {<br>    alert_log = {<br>      cloudwatch_logs = {<br>        logGroupName = "my-log-group"<br>      }<br>    }<br>  }<br><br>  logging_configuration = {<br>    alert_log = {<br>      kinesis_firehose = {<br>        deliveryStreamName = "my-stream"<br>      }<br>    }<br>  }</pre> | `any` | `{}` | no |
 | <a name="input_network_firewall_policy_change_protection"></a> [network\_firewall\_policy\_change\_protection](#input\_network\_firewall\_policy\_change\_protection) | A boolean flag indicating whether it is possible to change the associated firewall policy. Defaults to `false`. | `bool` | `false` | no |
 | <a name="input_network_firewall_subnet_change_protection"></a> [network\_firewall\_subnet\_change\_protection](#input\_network\_firewall\_subnet\_change\_protection) | A boolean flag indicating whether it is possible to change the associated subnet(s). Defaults to `false`. | `bool` | `false` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Tags to apply to the resources. | `map(string)` | `{}` | no |

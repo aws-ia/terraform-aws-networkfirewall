@@ -3,7 +3,7 @@
 # AWS Network Firewall
 module "network_firewall" {
   source  = "aws-ia/networkfirewall/aws"
-  version = "0.0.2"
+  version = "0.1.2"
 
   network_firewall_name   = "anfw-${var.identifier}"
   network_firewall_policy = aws_networkfirewall_firewall_policy.anfw_policy.arn
@@ -33,7 +33,7 @@ resource "aws_ec2_transit_gateway" "tgw" {
 # Inspection VPC. Module - https://github.com/aws-ia/terraform-aws-vpc
 module "inspection_vpc" {
   source  = "aws-ia/vpc/aws"
-  version = "= 3.0.1"
+  version = "= 4.0.0"
 
   transit_gateway_id = aws_ec2_transit_gateway.tgw.id
   transit_gateway_routes = {

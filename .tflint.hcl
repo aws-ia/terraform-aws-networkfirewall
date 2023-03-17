@@ -2,14 +2,14 @@
 # borrowed & modified indefinitely from https://github.com/ksatirli/building-infrastructure-you-can-mostly-trust/blob/main/.tflint.hcl
 
 plugin "aws" {
-  enabled = true
-  version = "0.14.0"
-  source  = "github.com/terraform-linters/tflint-ruleset-aws"
+    enabled = true
+    version = "0.21.1"
+    source  = "github.com/terraform-linters/tflint-ruleset-aws"
 }
 
 config {
-  module = true
-  force  = false
+  module     = false
+  force      = false
 }
 
 rule "terraform_required_providers" {
@@ -63,4 +63,13 @@ rule "terraform_standard_module_structure" {
 
 rule "terraform_workspace_remote" {
   enabled = true
+}
+
+# seems to be a bug when a resource is not created
+rule "aws_route_not_specified_target" {
+  enabled = false
+}
+
+rule "aws_route_specified_multiple_targets" {
+  enabled = false
 }

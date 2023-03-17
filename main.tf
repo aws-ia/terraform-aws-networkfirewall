@@ -101,3 +101,12 @@ module "central_inspection_with_egress_routing" {
   cidr_blocks     = var.routing_configuration.centralized_inspection_with_egress.network_cidr_blocks
   vpc_endpoint_id = local.networkfirewall_endpoints[local.availability_zones[count.index]]
 }
+
+# LOGGING: Module will be used when a logging_configuration is defined
+module "logging" {
+  count  = length(var.logging_configuration) != 0 ? 1 : 0
+  source = "./modules/logging"
+
+  firewall_arn          = aws_networkfirewall_firewall.anfw.arn
+  logging_configuration = var.logging_configuration
+}

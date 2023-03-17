@@ -2,7 +2,7 @@
 
 output "vpc_id" {
   description = "VPC ID."
-  value       = awscc_ec2_vpc.vpc.vpc_id
+  value       = aws_vpc.vpc.id
 }
 
 output "subnet_ids" {
@@ -30,10 +30,10 @@ output "subnet_cidrs" {
 output "route_table_ids" {
   description = "Route Table IDs."
   value = {
-    private1 = { for k, v in awscc_ec2_route_table.private1_rt : k => v.id }
-    private2 = { for k, v in awscc_ec2_route_table.private2_rt : k => v.id }
-    private3 = { for k, v in awscc_ec2_route_table.private3_rt : k => v.id }
-    firewall = { for k, v in awscc_ec2_route_table.firewall_rt : k => v.id }
-    endpoint = { for k, v in awscc_ec2_route_table.endpoint_rt : k => v.id }
+    private1 = { for k, v in aws_route_table.private1_rt : k => v.id }
+    private2 = { for k, v in aws_route_table.private2_rt : k => v.id }
+    private3 = { for k, v in aws_route_table.private3_rt : k => v.id }
+    firewall = { for k, v in aws_route_table.firewall_rt : k => v.id }
+    endpoint = { for k, v in aws_route_table.endpoint_rt : k => v.id }
   }
 }

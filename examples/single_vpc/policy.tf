@@ -1,7 +1,7 @@
 # --- examples/single_vpc/policy.tf ---
 
 resource "aws_networkfirewall_firewall_policy" "anfw_policy" {
-  name = "firewall-policy-${var.identifier}"
+  name = "policy-firewall-${var.identifier}"
 
   firewall_policy {
 
