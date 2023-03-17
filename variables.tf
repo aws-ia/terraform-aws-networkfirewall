@@ -209,12 +209,10 @@ variable "logging_configuration" {
   type        = any
   default     = {}
   description = <<-EOF
-  Configuration of the logging desired for the Network Firewall. At most 2 configurations can exist, 1 destination for FLOW logs and 1 for ALERT logs.
-  More information about the differences between each of the Logging types can be checked in the README. 
-  Example definition of each type: 
+  Configuration of the logging desired for the Network Firewall. You can configure at most 2 destinations for your logs, 1 for FLOW logs and 1 for ALERT logs. Example definition of each type: 
   ```
     logging_configuration = {
-      flow_log_configuration = {
+      flow_log = {
         s3_bucket = {
           bucketName = "my-bucket"
           logPrefix = "/logs"
@@ -223,7 +221,7 @@ variable "logging_configuration" {
     }
 
     logging_configuration = {
-      alert_log_configuration = {
+      alert_log = {
         cloudwatch_logs = {
           logGroupName = "my-log-group"
         }
@@ -231,7 +229,7 @@ variable "logging_configuration" {
     }
 
     logging_configuration = {
-      alert_log_configuration = {
+      alert_log = {
         kinesis_firehose = {
           deliveryStreamName = "my-stream"
         }
@@ -242,18 +240,18 @@ variable "logging_configuration" {
 
   # You cannot specify other keys than the ones allowed
   validation {
-    error_message = "Valid keys in var.logging_configuration: \"flow_log_configuration\", \"alert_log_configuration\"."
+    error_message = "Valid keys in var.logging_configuration: \"flow_log\", \"alert_log\"."
     condition = length(
       setsubtract(
-        setunion(keys(var.logging_configuration), ["flow_log_destination", "alert_log_destination"]),
-        ["flow_log_destination", "alert_log_destination"]
+        setunion(keys(var.logging_configuration), ["flow_log", "alert_log"]),
+        ["flow_log", "alert_log"]
       )
     ) == 0
   }
 
   # You cannot specify other keys than the logging destination supported
   validation {
-    error_message = "Valid keys within \"flow_log_configuration\", \"alert_log_configuration\" are: \"s3_bucket\", \"cloudwatch_logs\", \"kinesis_firehose\"."
+    error_message = "Valid keys within \"flow_log\", \"alert_log\" are: \"s3_bucket\", \"cloudwatch_logs\", \"kinesis_firehose\"."
     condition = length(
       setsubtract(
         setunion(distinct(flatten([for c in var.logging_configuration : keys(c)])), ["s3_bucket", "cloudwatch_logs", "kinesis_firehose"]),

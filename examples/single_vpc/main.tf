@@ -14,25 +14,25 @@ module "vpc" {
   }
 }
 
-# Logging Resources
-resource "aws_s3_bucket" "logs" {
-  bucket_prefix = "anfw-logging-bucket"
-  acl           = "private"
-
-  versioning {
-    enabled = true
-  }
-  force_destroy = true
+# CloudWath Log Groups - for Flow and Alert
+resource "aws_cloudwatch_log_group" "alert_lg" {
+  name              = "alert-anfw-${var.identifier}"
+  retention_in_days = 7
+  kms_key_id        = aws_kms_key.log_key.arn
 }
 
-resource "aws_cloudwatch_log_group" "anfw_logs" {
-  name = "ANFWLogs"
+resource "aws_cloudwatch_log_group" "flow_lg" {
+  name              = "flow-anfw-${var.identifier}"
+  retention_in_days = 7
+  kms_key_id        = aws_kms_key.log_key.arn
 }
 
 # AWS Network Firewall
 module "network_firewall" {
-  source  = "aws-ia/networkfirewall/aws"
-  version = "0.0.2"
+  #source  = "aws-ia/networkfirewall/aws"
+  #version = "0.1.2"
+
+  source = "../.."
 
   network_firewall_name   = "anfw-${var.identifier}"
   network_firewall_policy = aws_networkfirewall_firewall_policy.anfw_policy.arn
@@ -50,18 +50,69 @@ module "network_firewall" {
   }
 
   logging_configuration = {
-    flow_log_destination = {
-      s3_bucket = {
-        bucketName = aws_s3_bucket.logs.id
-        logPrefix  = "logs"
+    flow_log = {
+      cloudwatch_logs = {
+        logGroupName = aws_cloudwatch_log_group.flow_lg.name
       }
     }
-    alert_log_destination = {
+    alert_log = {
       cloudwatch_logs = {
-        logGroupName = aws_cloudwatch_log_group.anfw_logs.name
+        logGroupName = aws_cloudwatch_log_group.alert_lg.name
       }
     }
   }
 }
 
+# DATA SOURCE: AWS CALLER IDENTITY - Used to get the Account ID
+data "aws_caller_identity" "current" {}
+
+# KMS
+# KMS Key
+resource "aws_kms_key" "log_key" {
+  description             = "KMS Logs Key"
+  deletion_window_in_days = 7
+  enable_key_rotation     = true
+  policy                  = data.aws_iam_policy_document.policy_kms_logs_document.json
+
+  tags = {
+    Name = "kms-key-${var.identifier}"
+  }
+}
+
+# KMS Policy - it allows the use of the Key by the CloudWatch log groups created in this sample
+data "aws_iam_policy_document" "policy_kms_logs_document" {
+  statement {
+    sid       = "Enable IAM User Permissions"
+    actions   = ["kms:*"]
+    resources = ["arn:aws:kms:${var.aws_region}:${data.aws_caller_identity.current.account_id}:*"]
+
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+  }
+
+  statement {
+    sid = "Enable KMS to be used by CloudWatch Logs"
+    actions = [
+      "kms:Encrypt*",
+      "kms:Decrypt*",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:Describe*"
+    ]
+    resources = ["arn:aws:kms:${var.aws_region}:${data.aws_caller_identity.current.account_id}:*"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["logs.${var.aws_region}.amazonaws.com"]
+    }
+
+    condition {
+      test     = "ArnLike"
+      variable = "kms:EncryptionContext:aws:logs:arn"
+      values   = ["arn:aws:logs:${var.aws_region}:${data.aws_caller_identity.current.account_id}:*"]
+    }
+  }
+}
 
