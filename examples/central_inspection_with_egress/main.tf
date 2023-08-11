@@ -3,10 +3,11 @@
 # AWS Network Firewall
 module "network_firewall" {
   source  = "aws-ia/networkfirewall/aws"
-  version = "0.1.1"
+  version = "1.0.0"
 
-  network_firewall_name   = "anfw-${var.identifier}"
-  network_firewall_policy = aws_networkfirewall_firewall_policy.anfw_policy.arn
+  network_firewall_name        = "anfw-${var.identifier}"
+  network_firewall_description = "AWS Network Firewall - ${var.identifier}"
+  network_firewall_policy      = aws_networkfirewall_firewall_policy.anfw_policy.arn
 
   vpc_id      = module.inspection_vpc.vpc_attributes.id
   number_azs  = var.inspection_vpc.number_azs
@@ -14,9 +15,9 @@ module "network_firewall" {
 
   routing_configuration = {
     centralized_inspection_with_egress = {
-      tgw_subnet_route_tables    = { for k, v in module.inspection_vpc.rt_attributes_by_type_by_az.transit_gateway : k => v.id }
-      public_subnet_route_tables = { for k, v in module.inspection_vpc.rt_attributes_by_type_by_az.public : k => v.id }
-      network_cidr_blocks        = [var.supernet]
+      connectivity_subnet_route_tables = { for k, v in module.inspection_vpc.rt_attributes_by_type_by_az.transit_gateway : k => v.id }
+      public_subnet_route_tables       = { for k, v in module.inspection_vpc.rt_attributes_by_type_by_az.public : k => v.id }
+      network_cidr_blocks              = [var.supernet]
     }
   }
 }
@@ -35,7 +36,7 @@ resource "aws_ec2_transit_gateway" "tgw" {
 # Inspection VPC. Module - https://github.com/aws-ia/terraform-aws-vpc
 module "inspection_vpc" {
   source  = "aws-ia/vpc/aws"
-  version = "= 4.0.0"
+  version = "= 4.3.0"
 
   name       = "inspection_vpc"
   cidr_block = var.inspection_vpc.cidr_block
@@ -43,7 +44,7 @@ module "inspection_vpc" {
 
   transit_gateway_id = aws_ec2_transit_gateway.tgw.id
   transit_gateway_routes = {
-    private = var.supernet
+    inspection = var.supernet
   }
 
   subnets = {
@@ -52,7 +53,7 @@ module "inspection_vpc" {
       nat_gateway_configuration = "all_azs"
     }
     inspection = {
-      netmask                 = var.inspection_vpc.private_subnet_netmask
+      netmask                 = var.inspection_vpc.inspection_subnet_netmask
       connect_to_public_natgw = true
     }
     transit_gateway = {

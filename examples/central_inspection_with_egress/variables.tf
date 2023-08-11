@@ -16,19 +16,22 @@ variable "identifier" {
 
 variable "supernet" {
   description = "Supernet CIDR block."
-  type        = string
+  type        = map(string)
 
-  default = "10.0.0.0/8"
+  default = {
+    ipv4 = "10.0.0.0/8"
+    ipv6 = "2001:db8:1234:1a00::/56"
+  }
 }
 
 variable "inspection_vpc" {
   description = "VPCs to create"
   type        = any
   default = {
-    cidr_block             = "10.129.0.0/16"
-    public_subnet_netmask  = 28
-    private_subnet_netmask = 28
-    tgw_subnet_netmask     = 28
-    number_azs             = 2
+    cidr_block                = "10.129.0.0/16"
+    public_subnet_netmask     = 28
+    inspection_subnet_netmask = 28
+    tgw_subnet_netmask        = 28
+    number_azs                = 2
   }
 }

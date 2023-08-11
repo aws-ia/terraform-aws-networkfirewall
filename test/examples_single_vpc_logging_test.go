@@ -8,7 +8,7 @@ import (
 
 func TestExamplesSingleVPC(t *testing.T) {
 	terraformOptions := &terraform.Options{
-		TerraformDir: "../examples/single_vpc",
+		TerraformDir: "../examples/single_vpc_logging",
 	}
 
 	defer terraform.Destroy(t, terraformOptions)

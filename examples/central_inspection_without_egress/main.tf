@@ -3,10 +3,11 @@
 # AWS Network Firewall
 module "network_firewall" {
   source  = "aws-ia/networkfirewall/aws"
-  version = "0.1.1"
+  version = "1.0.0"
 
-  network_firewall_name   = "anfw-${var.identifier}"
-  network_firewall_policy = aws_networkfirewall_firewall_policy.anfw_policy.arn
+  network_firewall_name        = "anfw-${var.identifier}"
+  network_firewall_description = "AWS Network Firewall - ${var.identifier}"
+  network_firewall_policy      = aws_networkfirewall_firewall_policy.anfw_policy.arn
 
   vpc_id      = module.inspection_vpc.vpc_attributes.id
   number_azs  = var.inspection_vpc.number_azs
@@ -14,7 +15,7 @@ module "network_firewall" {
 
   routing_configuration = {
     centralized_inspection_without_egress = {
-      tgw_subnet_route_tables = { for k, v in module.inspection_vpc.rt_attributes_by_type_by_az.transit_gateway : k => v.id }
+      connectivity_subnet_route_tables = { for k, v in module.inspection_vpc.rt_attributes_by_type_by_az.transit_gateway : k => v.id }
     }
   }
 }
@@ -33,7 +34,7 @@ resource "aws_ec2_transit_gateway" "tgw" {
 # Inspection VPC. Module - https://github.com/aws-ia/terraform-aws-vpc
 module "inspection_vpc" {
   source  = "aws-ia/vpc/aws"
-  version = "= 4.0.0"
+  version = "= 4.3.0"
 
   transit_gateway_id = aws_ec2_transit_gateway.tgw.id
   transit_gateway_routes = {

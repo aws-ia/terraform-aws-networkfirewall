@@ -1,8 +1,8 @@
-# --- examples/single_vpc/outputs.tf ---
+# --- examples/single_vpc_logging/outputs.tf ---
 
 output "vpc" {
   description = "VPC ID."
-  value       = module.vpc.vpc_id
+  value       = module.vpc.vpc_attributes.id
 }
 
 output "network_firewall" {

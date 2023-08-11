@@ -1,4 +1,4 @@
-# --- examples/single_vpc/policy.tf ---
+# --- examples/single_vpc_logging/policy.tf ---
 
 resource "aws_networkfirewall_firewall_policy" "anfw_policy" {
   name = "policy-firewall-${var.identifier}"

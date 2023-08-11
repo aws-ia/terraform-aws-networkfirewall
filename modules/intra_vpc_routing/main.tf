@@ -1,6 +1,6 @@
 # --- modules/intra_vpc_routing/main.tf ---
 
-resource "aws_route" "igw_route_table_to_protected_subnets" {
+resource "aws_route" "intra_vpc_route" {
   count = var.number_azs
 
   route_table_id         = var.route_tables[var.availability_zones[count.index]]

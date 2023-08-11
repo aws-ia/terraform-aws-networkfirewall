@@ -1,4 +1,4 @@
-# --- examples/single_vpc/providers.tf ---
+# --- examples/single_vpc_logging/providers.tf ---
 
 terraform {
   required_version = ">= 1.3.0"
