@@ -16,9 +16,12 @@ variable "identifier" {
 
 variable "supernet" {
   description = "Supernet CIDR block."
-  type        = string
+  type        = map(string)
 
-  default = "10.0.0.0/8"
+  default = {
+    ipv4 = "10.0.0.0/8"
+    ipv6 = "2001:db8:1234:1a00::/56"
+  }
 }
 
 variable "inspection_vpc" {

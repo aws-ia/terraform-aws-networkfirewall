@@ -22,8 +22,11 @@ locals {
 
 # AWS NETWORK FIREWALL RESOURCE
 resource "aws_networkfirewall_firewall" "anfw" {
-  name                              = var.network_firewall_name
-  firewall_policy_arn               = var.network_firewall_policy
+  name                = var.network_firewall_name
+  description         = var.network_firewall_description
+  firewall_policy_arn = var.network_firewall_policy
+
+  delete_protection                 = var.network_firewall_delete_protection
   firewall_policy_change_protection = var.network_firewall_policy_change_protection
   subnet_change_protection          = var.network_firewall_subnet_change_protection
 
@@ -32,7 +35,8 @@ resource "aws_networkfirewall_firewall" "anfw" {
     for_each = values(var.vpc_subnets)
 
     content {
-      subnet_id = subnet_mapping.value
+      subnet_id       = subnet_mapping.value
+      ip_address_type = "IPV4"
     }
   }
 

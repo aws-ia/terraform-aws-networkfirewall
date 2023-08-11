@@ -5,8 +5,9 @@ module "network_firewall" {
   source  = "aws-ia/networkfirewall/aws"
   version = "1.0.0"
 
-  network_firewall_name   = "anfw-${var.identifier}"
-  network_firewall_policy = aws_networkfirewall_firewall_policy.anfw_policy.arn
+  network_firewall_name        = "anfw-${var.identifier}"
+  network_firewall_description = "AWS Network Firewall - ${var.identifier}"
+  network_firewall_policy      = aws_networkfirewall_firewall_policy.anfw_policy.arn
 
   vpc_id      = module.vpc.vpc_attributes.id
   number_azs  = var.vpc.number_azs
@@ -48,7 +49,7 @@ module "network_firewall" {
 # VPC Module - https://github.com/aws-ia/terraform-aws-vpc
 module "vpc" {
   source  = "aws-ia/vpc/aws"
-  version = "= 4.0.0"
+  version = "= 4.3.0"
 
   name       = "vpc_intra_inspection"
   cidr_block = var.vpc.cidr_block

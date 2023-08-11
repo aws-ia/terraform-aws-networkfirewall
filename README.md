@@ -11,8 +11,10 @@ The module only handles the creation of the infrastructure, leaving full freedom
 
 To create AWS Network Firewall in your VPC, you need to provide the following information:
 
-- `network_firewall_name`= (Required|string) Name to provide the AWS Network Firewall resource.
+- `network_firewall_name` = (Required|string) Name to provide the AWS Network Firewall resource.
+- `network_firewall_description` = (Required|string) A friendly description of the firewall resource.
 - `network_firewall_policy`= (Required|string) ARN of the firewall policy to apply in the AWS Network Firewall resource. Check the definition of [AWS Network Firewall Policies](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/networkfirewall_firewall_policy) and [AWS Network Firewall Rule Groups](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/networkfirewall_rule_group) to see how you can create firewall policies.
+- `network_firewall_delete_protection` = (Optional|bool) A boolean flag indicating whether it is possible to delete the firewall. Defaults to `false`.
 - `network_firewall_policy_change_protection` = (Optional|bool) To indicate whether it is possible to change the associated firewall policy after creation. Defaults to `false`.
 - `network_firewall_subnet_change_protection` = (Optional|bool) To indicate whether it is possible to change the associated subnet(s) after creation. Defaults to `false`.
 - `vpc_id` = (Required|string) ID of the VPC where the AWS Network Firewall resource should be placed.
@@ -40,7 +42,7 @@ The first use case is when the firewall endpoints are located in the VPC to insp
 
 - `igw_route_table` = (Required|string) VPC route table ID associated to an Internet gateway. In this route table it will be created routes pointing to the Network Firewall endpoints with destination the CIDR blocks provided in the `protected_subnet_cidr_blocks` variable.
 - `protected_subnet_route_tables` = (Required|map(string)) Map of the VPC subnet route tables where the resources to protect (using the Network Firewall resource) are located - expected format of the map is Availability Zone (key) --> VPC route table (value). In these route tables it will be created the default route table pointing to the Network Firewall endpoints - ensuring Availability Zone affinity.
-- `protected_subnet_cidr_blocks` = (Required|map(string)) Map of CIDR blocks indicating the subnets where the resources to protect (using the Network Firewall resource) are located - expected format of the map is Availability Zone (key) --> IPv4 CIDR block (value).
+- `protected_subnet_cidr_blocks` = (Required|map(string)) Map of IPv4 CIDR blocks indicating the subnets where the resources to protect (using the Network Firewall resource) are located - expected format of the map is Availability Zone (key) --> IPv4 CIDR block (value).
 
 An example of the definition of this routing configuration is the following one:
 
@@ -69,7 +71,7 @@ When placing firewall endpoints to inspect traffic between workloads inside the 
 - `number_routes` = (Required|number) Number of configured items in the `routes` variable.
 - `routes` = (Required|list(map(any))) List of intra-VPC route configurations. Important to note that only one direction is configured per item in this list, so in most situations you will need two items per group of subnets to inspect. Each item expects a map of strings with two values:
   - `source_subnet_route_tables` = (Required|map(string)) VPC route table of the source subnet - expected format of the map is Availability Zone (key) --> VPC route table (value)
-  - `destination_subnet_cidr_blocks` = (Required|map(string)). CIDR block of the destination subnet - expected format of the map is Availability Zone (key) --> VPC route table (value)
+  - `destination_subnet_cidr_blocks` = (Required|map(string)). IPv4 CIDR blocks of the destination subnet - expected format of the map is Availability Zone (key) --> IPv4 CIDR block (value)
 
 An example of the definition of this routing configuration is the following one.
 
@@ -133,7 +135,7 @@ The use case covers the creation of a centralized Inspection VPC in a hub-and-sp
 
 - `connectivity_subnet_route_tables` = (Optional|map(string)) Map of VPC subnet route tables where the Transit Gateway or Cloud WAN's core network ENIs are located. In these route tables a default route pointing to the Network Firewall endpoints is created - expected format of the map is Availability Zone (key) --> VPC route table (value)
 - `public_subnet_route_tables` = (Required|map(string)) Map of VPC public subnet route tables. In these route tables, routes are created pointing to the Network Firewall endpoints with destination the CIDR blocks defined in the `network_cidr_blocks` variable. The expected format of the map is Availability Zone (key) --> VPC route table (value)
-- `network_cidr_blocks` = (Required|list(string)) List of CIDR blocks defining the AWS network.
+- `network_cidr_blocks` = (Required|list(string)) List of IPv4 CIDR blocks defining the AWS network.
 
 An example of the definition of this routing configuration is the following one:
 
@@ -244,12 +246,14 @@ logging_configuration = {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_network_firewall_description"></a> [network\_firewall\_description](#input\_network\_firewall\_description) | A friendly description of the firewall resource. | `string` | n/a | yes |
 | <a name="input_network_firewall_name"></a> [network\_firewall\_name](#input\_network\_firewall\_name) | Name to give the AWS Network Firewall resource created. | `string` | n/a | yes |
 | <a name="input_network_firewall_policy"></a> [network\_firewall\_policy](#input\_network\_firewall\_policy) | ARN of the firewall policy to include in AWS Network Firewall. | `string` | n/a | yes |
 | <a name="input_number_azs"></a> [number\_azs](#input\_number\_azs) | Number of Availability Zones to place the Network Firewall endpoints. | `number` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC ID to place the Network Firewall endpoints. | `string` | n/a | yes |
 | <a name="input_vpc_subnets"></a> [vpc\_subnets](#input\_vpc\_subnets) | Map of subnet IDs to place the Network Firewall endpoints. The expected format of the map is the Availability Zone as key, and the ID of the subnet as value.<br>Example (supposing us-east-1 as AWS Region):<pre>vpc_subnets = {<br>    us-east-1a = subnet-IDa<br>    us-east-1b = subnet-IDb<br>    us-east-1c = subnet-IDc<br>}</pre> | `map(string)` | n/a | yes |
 | <a name="input_logging_configuration"></a> [logging\_configuration](#input\_logging\_configuration) | Configuration of the logging desired for the Network Firewall. You can configure at most 2 destinations for your logs, 1 for FLOW logs and 1 for ALERT logs.<br>More information about the format of the variable (and examples) can be found in the README.<pre></pre> | `any` | `{}` | no |
+| <a name="input_network_firewall_delete_protection"></a> [network\_firewall\_delete\_protection](#input\_network\_firewall\_delete\_protection) | A boolean flag indicating whether it is possible to delete the firewall. Defaults to `false`. | `bool` | `false` | no |
 | <a name="input_network_firewall_policy_change_protection"></a> [network\_firewall\_policy\_change\_protection](#input\_network\_firewall\_policy\_change\_protection) | A boolean flag indicating whether it is possible to change the associated firewall policy. Defaults to `false`. | `bool` | `false` | no |
 | <a name="input_network_firewall_subnet_change_protection"></a> [network\_firewall\_subnet\_change\_protection](#input\_network\_firewall\_subnet\_change\_protection) | A boolean flag indicating whether it is possible to change the associated subnet(s). Defaults to `false`. | `bool` | `false` | no |
 | <a name="input_routing_configuration"></a> [routing\_configuration](#input\_routing\_configuration) | Configuration of the routing desired in the VPC. Depending the VPC type, the information to provide is different. The configuration types supported are: `single_vpc`, `intra_vpc_inspection`, `centralized_inspection_without_egress`, and `centralized_inspection_with_egress`. **Only one key (option) can be defined**<br>More information about the differences between each the routing configurations (and examples) can be checked in the README.<pre></pre> | `any` | `{}` | no |
@@ -259,5 +263,5 @@ logging_configuration = {
 
 | Name | Description |
 |------|-------------|
-| <a name="output_aws_network_firewall"></a> [aws\_network\_firewall](#output\_aws\_network\_firewall) | AWS Network Firewall. |
+| <a name="output_aws_network_firewall"></a> [aws\_network\_firewall](#output\_aws\_network\_firewall) | Full output of aws\_networkfirewall\_firewall resource. |
 <!-- END_TF_DOCS -->

@@ -5,8 +5,9 @@ module "network_firewall" {
   source  = "aws-ia/networkfirewall/aws"
   version = "1.0.0"
 
-  network_firewall_name   = "anfw-${var.identifier}"
-  network_firewall_policy = aws_networkfirewall_firewall_policy.anfw_policy.arn
+  network_firewall_name        = "anfw-${var.identifier}"
+  network_firewall_description = "AWS Network Firewall - ${var.identifier}"
+  network_firewall_policy      = aws_networkfirewall_firewall_policy.anfw_policy.arn
 
   vpc_id      = module.vpc.vpc_attributes.id
   number_azs  = var.vpc.number_azs

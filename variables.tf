@@ -6,9 +6,21 @@ variable "network_firewall_name" {
   description = "Name to give the AWS Network Firewall resource created."
 }
 
+variable "network_firewall_description" {
+  type        = string
+  description = "A friendly description of the firewall resource."
+}
+
 variable "network_firewall_policy" {
   type        = string
   description = "ARN of the firewall policy to include in AWS Network Firewall."
+}
+
+variable "network_firewall_delete_protection" {
+  type        = bool
+  description = "A boolean flag indicating whether it is possible to delete the firewall. Defaults to `false`."
+
+  default = false
 }
 
 variable "network_firewall_policy_change_protection" {
