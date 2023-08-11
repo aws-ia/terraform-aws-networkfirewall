@@ -3,7 +3,7 @@
 # AWS Network Firewall
 module "network_firewall" {
   source  = "aws-ia/networkfirewall/aws"
-  version = "0.1.1"
+  version = "1.0.0"
 
   network_firewall_name   = "anfw-${var.identifier}"
   network_firewall_policy = aws_networkfirewall_firewall_policy.anfw_policy.arn
@@ -14,7 +14,7 @@ module "network_firewall" {
 
   routing_configuration = {
     centralized_inspection_without_egress = {
-      tgw_subnet_route_tables = { for k, v in module.inspection_vpc.rt_attributes_by_type_by_az.transit_gateway : k => v.id }
+      connectivity_subnet_route_tables = { for k, v in module.inspection_vpc.rt_attributes_by_type_by_az.transit_gateway : k => v.id }
     }
   }
 }

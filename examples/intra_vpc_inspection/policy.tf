@@ -93,13 +93,13 @@ resource "aws_networkfirewall_rule_group" "allow_icmp_private1_2" {
       ip_sets {
         key = "PRIVATE1"
         ip_set {
-          definition = var.vpc.private_subnet_cidrs.private1
+          definition = var.vpc.private1_subnet_cidrs
         }
       }
       ip_sets {
         key = "PRIVATE2"
         ip_set {
-          definition = var.vpc.private_subnet_cidrs.private2
+          definition = var.vpc.private2_subnet_cidrs
         }
       }
     }
@@ -124,13 +124,13 @@ resource "aws_networkfirewall_rule_group" "allow_icmp_private2_3" {
       ip_sets {
         key = "PRIVATE2"
         ip_set {
-          definition = var.vpc.private_subnet_cidrs.private2
+          definition = var.vpc.private2_subnet_cidrs
         }
       }
       ip_sets {
         key = "PRIVATE3"
         ip_set {
-          definition = var.vpc.private_subnet_cidrs.private3
+          definition = var.vpc.private3_subnet_cidrs
         }
       }
     }

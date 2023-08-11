@@ -48,7 +48,7 @@ The AWS Region used in the example is **eu-west-1 (Ireland)**.
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_inspection_vpc"></a> [inspection\_vpc](#module\_inspection\_vpc) | aws-ia/vpc/aws | = 4.0.0 |
-| <a name="module_network_firewall"></a> [network\_firewall](#module\_network\_firewall) | aws-ia/networkfirewall/aws | 0.1.1 |
+| <a name="module_network_firewall"></a> [network\_firewall](#module\_network\_firewall) | aws-ia/networkfirewall/aws | 1.0.0 |
 
 ## Resources
 
@@ -66,7 +66,7 @@ The AWS Region used in the example is **eu-west-1 (Ireland)**.
 |------|-------------|------|---------|:--------:|
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | AWS Region. | `string` | `"eu-west-1"` | no |
 | <a name="input_identifier"></a> [identifier](#input\_identifier) | Project identifier. | `string` | `"central-inspection-egress"` | no |
-| <a name="input_inspection_vpc"></a> [inspection\_vpc](#input\_inspection\_vpc) | VPCs to create | `any` | <pre>{<br>  "cidr_block": "10.129.0.0/16",<br>  "number_azs": 2,<br>  "private_subnet_netmask": 28,<br>  "public_subnet_netmask": 28,<br>  "tgw_subnet_netmask": 28<br>}</pre> | no |
+| <a name="input_inspection_vpc"></a> [inspection\_vpc](#input\_inspection\_vpc) | VPCs to create | `any` | <pre>{<br>  "cidr_block": "10.129.0.0/16",<br>  "inspection_subnet_netmask": 28,<br>  "number_azs": 2,<br>  "public_subnet_netmask": 28,<br>  "tgw_subnet_netmask": 28<br>}</pre> | no |
 | <a name="input_supernet"></a> [supernet](#input\_supernet) | Supernet CIDR block. | `string` | `"10.0.0.0/8"` | no |
 
 ## Outputs

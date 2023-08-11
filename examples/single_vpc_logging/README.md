@@ -1,5 +1,5 @@
 <!-- BEGIN_TF_DOCS -->
-# AWS Network Firewall Module - Single VPC
+# AWS Network Firewall Module - Single VPC (with logging)
 
 This example builds AWS Network Firewall in a single VPC to inspect any ingress/egress traffic - distributed inspection model.
 
@@ -8,7 +8,8 @@ This example builds AWS Network Firewall in a single VPC to inspect any ingress/
   * Amazon VPC with 3 subnet types (firewall, protected, and private)
 * Created by the Network Firewall mdodule:
   * AWS Network Firewall resource.
-  * Routing to the firewall endpoints - to inspect traffic between the Internet gateway and the protected subnets)
+  * Routing to the firewall endpoints - to inspect traffic between the Internet gateway and the protected subnets.
+  * Logging configuration.
 
 The AWS Region used in the example is **us-east-2 (Ohio)**.
 
@@ -26,7 +27,7 @@ The AWS Region used in the example is **us-east-2 (Ohio)**.
 * Clone the repository
 * Edit the *variables.tf* file in the project root directory
 
-**Note** Network Firewall endpoints will be deployted in all the Availability Zones used in the example (*var.vpc.number\_azs*). By default, the number of AZs used is 2 to follow best practices. Take that into account when doing tests from a cost perspective.
+**Note** Network Firewall endpoints will be deployed in all the Availability Zones used in the example (*var.vpc.number\_azs*). By default, the number of AZs used is 2 to follow best practices. Take that into account when doing tests from a cost perspective.
 
 ## Requirements
 
@@ -45,8 +46,8 @@ The AWS Region used in the example is **us-east-2 (Ohio)**.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_network_firewall"></a> [network\_firewall](#module\_network\_firewall) | aws-ia/networkfirewall/aws | 0.1.1 |
-| <a name="module_vpc"></a> [vpc](#module\_vpc) | ./modules/vpc | n/a |
+| <a name="module_network_firewall"></a> [network\_firewall](#module\_network\_firewall) | aws-ia/networkfirewall/aws | 1.0.0 |
+| <a name="module_vpc"></a> [vpc](#module\_vpc) | aws-ia/vpc/aws | = 4.3.0 |
 
 ## Resources
 
@@ -59,6 +60,8 @@ The AWS Region used in the example is **us-east-2 (Ohio)**.
 | [aws_networkfirewall_rule_group.allow_domains](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/networkfirewall_rule_group) | resource |
 | [aws_networkfirewall_rule_group.allow_icmp](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/networkfirewall_rule_group) | resource |
 | [aws_networkfirewall_rule_group.drop_remote](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/networkfirewall_rule_group) | resource |
+| [aws_route_table.igw_route_table](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table) | resource |
+| [aws_route_table_association.igw_route_table_assoc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table_association) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_iam_policy_document.policy_kms_logs_document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 
@@ -68,7 +71,7 @@ The AWS Region used in the example is **us-east-2 (Ohio)**.
 |------|-------------|------|---------|:--------:|
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | AWS Region. | `string` | `"us-east-2"` | no |
 | <a name="input_identifier"></a> [identifier](#input\_identifier) | Project identifier. | `string` | `"single-vpc"` | no |
-| <a name="input_vpc"></a> [vpc](#input\_vpc) | Information about the VPC to create. | `any` | <pre>{<br>  "cidr_block": "10.129.0.0/16",<br>  "firewall_subnet_cidrs": [<br>    "10.129.0.0/24",<br>    "10.129.1.0/24",<br>    "10.129.2.0/24"<br>  ],<br>  "number_azs": 2,<br>  "private_subnet_cidrs": [<br>    "10.129.6.0/24",<br>    "10.129.7.0/24",<br>    "10.129.8.0/24"<br>  ],<br>  "protected_subnet_cidrs": [<br>    "10.129.3.0/24",<br>    "10.129.4.0/24",<br>    "10.129.5.0/24"<br>  ]<br>}</pre> | no |
+| <a name="input_vpc"></a> [vpc](#input\_vpc) | Information about the VPC to create. | `any` | <pre>{<br>  "cidr_block": "10.129.0.0/16",<br>  "inspection_subnet_cidrs": [<br>    "10.129.0.0/24",<br>    "10.129.1.0/24"<br>  ],<br>  "number_azs": 2,<br>  "private_subnet_cidrs": [<br>    "10.129.4.0/24",<br>    "10.129.5.0/24"<br>  ],<br>  "protected_subnet_cidrs": [<br>    "10.129.2.0/24",<br>    "10.129.3.0/24"<br>  ]<br>}</pre> | no |
 
 ## Outputs
 

@@ -25,10 +25,10 @@ variable "inspection_vpc" {
   description = "VPCs to create"
   type        = any
   default = {
-    cidr_block             = "10.129.0.0/16"
-    public_subnet_netmask  = 28
-    private_subnet_netmask = 28
-    tgw_subnet_netmask     = 28
-    number_azs             = 2
+    cidr_block                = "10.129.0.0/16"
+    public_subnet_netmask     = 28
+    inspection_subnet_netmask = 28
+    tgw_subnet_netmask        = 28
+    number_azs                = 2
   }
 }

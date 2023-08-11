@@ -59,83 +59,10 @@ EOF
 
 variable "routing_configuration" {
   type        = any
+  default     = {}
   description = <<-EOF
-  Configuration of the routing desired in the VPC. Depending the type of VPC, the information to provide is different. The type of VPCs supported are: `single_vpc`, `intra_vpc_inspection`, `centralized_inspection_without_egress`, and `centralized_inspection_with_egress`. **Only one key (option) can be defined**
-  More information about the differences between each of the VPC types can be checked in the README. Example definition of each type (supposing us-east-1 as AWS Region): 
-  ```
-  routing_configuration = { 
-    single_vpc = { 
-      igw_route_table = rtb-ID
-      protected_subnet_route_tables = { 
-        us-east-1a = rtb-IDa
-        us-east-1b = rtb-IDb
-        us-east-1c = rtb-IDc
-      }
-      protected_subnet_cidr_blocks = {
-        us-east-1a = "10.0.0.0/24"
-        us-east-1b = "10.0.1.0/24"
-        us-east-1c = "10.0.2.0/24"
-      }
-    }
-  }
-
-  routing_configuration = { 
-    intra_vpc_inspection = {
-      number_routes = 2
-      routes = {
-        { 
-          source_subnet_route_tables = { 
-            us-east-1a = rtb-IDa
-            us-east-1b = rtb-IDb
-            us-east-1c = rtb-IDc
-          }
-          destination_subnet_cidr_blocks = {
-            us-east-1a = "10.0.0.0/24"
-            us-east-1b = "10.0.1.0/24"
-            us-east-1c = "10.0.2.0/24"
-          }
-        },
-        {
-          source_subnet_route_tables = { 
-            us-east-1a = rtb-IDaa
-            us-east-1b = rtb-IDbb
-            us-east-1c = rtb-IDcc
-          }
-          destination_subnet_cidr_blocks = {
-            us-east-1a = "10.0.3.0/24"
-            us-east-1b = "10.0.4.0/24"
-            us-east-1c = "10.0.5.0/24"
-          }
-        }
-      }
-    }
-  }
-
-  routing_configuration = {
-    centralized_inspection_without_egress = { 
-      tgw_subnet_route_tables = { 
-        us-east-1a = rtb-IDa
-        us-east-1b = rtb-IDb
-        us-east-1c = rtb-IDc
-      }
-    }
-  }
-
-  routing_configuration = {
-    centralized_inspection_with_egress = {
-      tgw_route_tables = { 
-        us-east-1a = rtb-IDa
-        us-east-1b = rtb-IDb
-        us-east-1c = rtb-IDc
-      }
-      public_route_tables = {
-        us-east-1a = rtb-IDaa
-        us-east-1b = rtb-IDbb
-        us-east-1c = rtb-IDcc
-      }
-      network_cidr_blocks = ["10.0.0.0/8", "192.168.0.0/24"]
-    }
-  }
+  Configuration of the routing desired in the VPC. Depending the VPC type, the information to provide is different. The configuration types supported are: `single_vpc`, `intra_vpc_inspection`, `centralized_inspection_without_egress`, and `centralized_inspection_with_egress`. **Only one key (option) can be defined**
+  More information about the differences between each the routing configurations (and examples) can be checked in the README. 
   ```
 EOF
 
@@ -188,53 +115,30 @@ EOF
 
   # Valid keys in Central Inspection VPC (without egress traffic)
   validation {
-    error_message = "When configuring the inspecton routing in a central Inspection VPC (without egress traffic), the valid key values are: \"tgw_subnet_route_tables\"."
+    error_message = "When configuring the inspecton routing in a central Inspection VPC (without egress traffic), the valid key values are: \"connectivity_subnet_route_tables\", \"cwan_subnet_route_tables\"."
     condition = length(setsubtract(keys(try(var.routing_configuration.centralized_inspection_without_egress, {})), [
-      "tgw_subnet_route_tables"
+      "connectivity_subnet_route_tables"
     ])) == 0
   }
 
   # Valid keys in Central Inspection VPC (with egress traffic)
   validation {
-    error_message = "When configuring the inspecton routing in a central Inspection VPC (with egress traffic), the valid key values are: \"tgw_route_tables\", \"public_route_tables\", \"network_cidr_blocks\"."
+    error_message = "When configuring the inspecton routing in a central Inspection VPC (with egress traffic), the valid key values are: \"connectivity_subnet_route_tables\", \"public_route_tables\", \"network_cidr_blocks\"."
     condition = length(setsubtract(keys(try(var.routing_configuration.centralized_inspection_with_egress, {})), [
-      "tgw_subnet_route_tables",
+      "connectivity_subnet_route_tables",
       "public_subnet_route_tables",
       "network_cidr_blocks"
     ])) == 0
   }
 }
 
+# AWS Network Firewall logging configuration
 variable "logging_configuration" {
   type        = any
   default     = {}
   description = <<-EOF
-  Configuration of the logging desired for the Network Firewall. You can configure at most 2 destinations for your logs, 1 for FLOW logs and 1 for ALERT logs. Example definition of each type: 
-  ```
-    logging_configuration = {
-      flow_log = {
-        s3_bucket = {
-          bucketName = "my-bucket"
-          logPrefix = "/logs"
-        }
-      }
-    }
-
-    logging_configuration = {
-      alert_log = {
-        cloudwatch_logs = {
-          logGroupName = "my-log-group"
-        }
-      }
-    }
-
-    logging_configuration = {
-      alert_log = {
-        kinesis_firehose = {
-          deliveryStreamName = "my-stream"
-        }
-      }
-    }
+  Configuration of the logging desired for the Network Firewall. You can configure at most 2 destinations for your logs, 1 for FLOW logs and 1 for ALERT logs.
+  More information about the format of the variable (and examples) can be found in the README.
   ```
   EOF
 
