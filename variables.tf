@@ -37,6 +37,13 @@ variable "network_firewall_subnet_change_protection" {
   default = false
 }
 
+variable "network_firewall_encryption_key_arn" {
+  type        = string
+  description = "Customer managed KMS Key ARN for encryption at rest."
+
+  default = null
+}
+
 variable "tags" {
   description = "Tags to apply to the resources."
   type        = map(string)
