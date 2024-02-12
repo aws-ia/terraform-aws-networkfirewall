@@ -40,6 +40,15 @@ resource "aws_networkfirewall_firewall" "anfw" {
     }
   }
 
+  dynamic "encryption_configuration" {
+    for_each = var.network_firewall_encryption_key_arn == null ? [] : [1]
+
+    content {
+      type   = "CUSTOMER_KMS"
+      key_id = var.network_firewall_encryption_key_arn
+    }
+  }
+
   tags = module.tags.tags_aws
 }
 

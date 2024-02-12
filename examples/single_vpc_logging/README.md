@@ -6,7 +6,9 @@ This example builds AWS Network Firewall in a single VPC to inspect any ingress/
 * Outside of the Network Firewall module:
   * Firewall policies - in `policy.tf`
   * Amazon VPC with 3 subnet types (firewall, protected, and private)
-* Created by the Network Firewall mdodule:
+  * KMS Key for CloudWatch log groups encryption
+  * KMS key for Network Firewall data encryption
+* Created by the Network Firewall module:
   * AWS Network Firewall resource.
   * Routing to the firewall endpoints - to inspect traffic between the Internet gateway and the protected subnets.
   * Logging configuration.
@@ -46,8 +48,8 @@ The AWS Region used in the example is **us-east-2 (Ohio)**.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_network_firewall"></a> [network\_firewall](#module\_network\_firewall) | aws-ia/networkfirewall/aws | 1.0.0 |
-| <a name="module_vpc"></a> [vpc](#module\_vpc) | aws-ia/vpc/aws | = 4.3.0 |
+| <a name="module_network_firewall"></a> [network\_firewall](#module\_network\_firewall) | ../../ | n/a |
+| <a name="module_vpc"></a> [vpc](#module\_vpc) | aws-ia/vpc/aws | = 4.4.1 |
 
 ## Resources
 
@@ -55,6 +57,7 @@ The AWS Region used in the example is **us-east-2 (Ohio)**.
 |------|------|
 | [aws_cloudwatch_log_group.alert_lg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
 | [aws_cloudwatch_log_group.flow_lg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
+| [aws_kms_key.encryption_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key) | resource |
 | [aws_kms_key.log_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key) | resource |
 | [aws_networkfirewall_firewall_policy.anfw_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/networkfirewall_firewall_policy) | resource |
 | [aws_networkfirewall_rule_group.allow_domains](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/networkfirewall_rule_group) | resource |
@@ -63,6 +66,7 @@ The AWS Region used in the example is **us-east-2 (Ohio)**.
 | [aws_route_table.igw_route_table](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table) | resource |
 | [aws_route_table_association.igw_route_table_assoc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route_table_association) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
+| [aws_iam_policy_document.policy_encryption_key_document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.policy_kms_logs_document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 
 ## Inputs
