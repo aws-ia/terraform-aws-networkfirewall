@@ -5,7 +5,7 @@
 # awscc tags = module.tags.tags
 module "tags" {
   source  = "aws-ia/label/aws"
-  version = "0.0.5"
+  version = "0.0.6"
 
   tags = var.tags
 }
@@ -83,7 +83,7 @@ module "intra_vpc_routing" {
   firewall_endpoints = local.networkfirewall_endpoints
 }
 
-# ROUTES: Central Inspection VPC (without egress) 
+# ROUTES: Central Inspection VPC (without egress)
 # Route from the connectivity subnets (Transit Gateway or Cloud WAN's core network) to 0.0.0.0/0 via the firewall endpoints
 resource "aws_route" "connectivity_to_firewall_endpoint_without_egress" {
   count = local.vpc_type == "centralized_inspection_without_egress" ? var.number_azs : 0
@@ -93,7 +93,7 @@ resource "aws_route" "connectivity_to_firewall_endpoint_without_egress" {
   vpc_endpoint_id        = local.networkfirewall_endpoints[local.availability_zones[count.index]]
 }
 
-# ROUTES: Central Inspection VPC (with egress) 
+# ROUTES: Central Inspection VPC (with egress)
 # Route from the connectivity subnets (Transit Gateway or Cloud WAN's core network) to 0.0.0.0/0 via the firewall endpoints
 resource "aws_route" "connectivity_to_firewall_endpoint" {
   count = local.vpc_type == "centralized_inspection_with_egress" ? var.number_azs : 0
@@ -122,3 +122,4 @@ module "logging" {
   firewall_arn          = aws_networkfirewall_firewall.anfw.arn
   logging_configuration = var.logging_configuration
 }
+
