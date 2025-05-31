@@ -231,7 +231,7 @@ logging_configuration = {
 | <a name="module_central_inspection_with_egress_routing"></a> [central\_inspection\_with\_egress\_routing](#module\_central\_inspection\_with\_egress\_routing) | ./modules/central_inspection_with_egress_routing | n/a |
 | <a name="module_intra_vpc_routing"></a> [intra\_vpc\_routing](#module\_intra\_vpc\_routing) | ./modules/intra_vpc_routing | n/a |
 | <a name="module_logging"></a> [logging](#module\_logging) | ./modules/logging | n/a |
-| <a name="module_tags"></a> [tags](#module\_tags) | aws-ia/label/aws | 0.0.5 |
+| <a name="module_tags"></a> [tags](#module\_tags) | aws-ia/label/aws | 0.0.6 |
 
 ## Resources
 
